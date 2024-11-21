@@ -30,7 +30,9 @@ const Slide = ({ items = [], itemsPerSlide }) => {
                 <img src={book.bookImageURL} alt={book.bookname} className="book-image" />
                 <p>{book.bookname}</p>
                 <p>{book.authors}</p>
-                <a href={book.bookDtlUrl} target="_blank" rel="noopener noreferrer">상세 보기</a>
+                <a href={`${process.env.REACT_APP_SERVER}/book/detail/${book.isbn13}`} 
+                   target="_blank"
+                   rel="noopener noreferrer">상세 보기</a>
               </div>
             ))
           ) : (
