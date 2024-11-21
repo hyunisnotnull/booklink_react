@@ -12,7 +12,7 @@ const Home = () => {
 
   // 처음에만 데이터 가져오기
   useEffect(() => {
-    axios.get('http://localhost:3001/home', {
+    axios.get(`${process.env.REACT_APP_SERVER}/home`, {
         params: {
           libraryCode: libraryCode,  // 도서관 코드
         }
