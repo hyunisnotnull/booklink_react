@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-<<<<<<< HEAD:src/pages/BookDetail.jsx
-<<<<<<< Updated upstream:src/pages/BookDetail.jsx
-import '../css/Home.css';
-=======
 import Slide from '../../comp/Slide.jsx';
 import '../../css/BookDetail.css';
 import '../../css/Home.css';
->>>>>>> Stashed changes:src/pages/books/BookDetail.jsx
-=======
->>>>>>> 0788c412db1178aaeccd1b6a8d850c24bcee2cd8:src/pages/books/BookDetail.jsx
 
 const BookDetail = () => {
   const { bookID } = useParams(); // URL에서 bookID 가져오기
