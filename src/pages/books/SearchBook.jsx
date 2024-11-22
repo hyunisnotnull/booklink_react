@@ -45,7 +45,7 @@ const SearchBook = () => {
 
             setBooks(searchResults);
             setTotalCount(Math.ceil(total / 10));
-            setMessage(`[총 ${total}건] "${searchParams.title || searchParams.author || searchParams.publisher || searchParams.isbn13 || '전체'}"에 대한 결과입니다.`);
+            setMessage(`[총 ${parseInt(total)}건] "${searchParams.title || searchParams.author || searchParams.publisher || searchParams.isbn13 || '전체'}"에 대한 결과입니다.`);
         } catch (error) {
             console.error('검색 오류:', error);
             setErrorMessage('서버에 문제가 발생했습니다. 다시 시도해주세요.');
@@ -93,7 +93,7 @@ const SearchBook = () => {
         setBooks(searchResults);
         setTotalCount(Math.ceil(total / 10));
 
-        setMessage(`[총 "${total}"건] "${title || author || publisher || isbn13 || '전체'}"에 대한 결과입니다.`);
+        setMessage(`[총 "${parseInt(total)}"건] "${title || author || publisher || isbn13 || '전체'}"에 대한 결과입니다.`);
         } catch (error) {
         console.error('검색 오류:', error);
         setErrorMessage('서버에 문제가 발생했습니다. 다시 시도해주세요.');
