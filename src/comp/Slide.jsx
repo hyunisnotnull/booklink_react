@@ -30,9 +30,13 @@ const Slide = ({ items = [], itemsPerSlide }) => {
                 <img src={book.bookImageURL} alt={book.bookname} classNameName="book-image" />
                 <p>{book.bookname}</p>
                 <p>{book.authors}</p>
+<<<<<<< Updated upstream
                 <a href={`${process.env.REACT_APP_SERVER}/book/detail/${book.isbn13}`} 
                    target="_blank"
                    rel="noopener noreferrer">상세 보기</a>
+=======
+                <a href={`/book/detail/${book.isbn13 || book.set_isbn13}`}>상세 보기</a>
+>>>>>>> Stashed changes
               </div>
             ))
           ) : (
