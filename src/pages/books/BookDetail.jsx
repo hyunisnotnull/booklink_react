@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import '../css/Home.css';
 
 const BookDetail = () => {
   const { bookID } = useParams(); // URL에서 bookID 가져오기
