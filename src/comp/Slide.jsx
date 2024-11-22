@@ -17,22 +17,20 @@ const Slide = ({ items = [], itemsPerSlide }) => {
   const currentItems = items.slice(currentSlide * itemsPerSlide, (currentSlide + 1) * itemsPerSlide);
 
   return (
-    <div classNameName="slider">
-      <button classNameName="slider-button prev" onClick={goToPreviousSlide}>
+    <div className="slider">
+      <button className="slider-button prev" onClick={goToPreviousSlide}>
         &#60;
       </button>
 
-      <div classNameName="book-list">
-        <div classNameName="book-items">
+      <div className="book-list">
+        <div className="book-items">
           {currentItems.length > 0 ? (
             currentItems.map((book, index) => (
-              <div key={index} classNameName="book-item">
-                <img src={book.bookImageURL} alt={book.bookname} classNameName="book-image" />
+              <div key={index} className="book-item">
+                <img src={book.bookImageURL} alt={book.bookname} className="book-image" />
                 <p>{book.bookname}</p>
                 <p>{book.authors}</p>
-                <a href={`${process.env.REACT_APP_SERVER}/book/detail/${book.isbn13}`} 
-                   target="_blank"
-                   rel="noopener noreferrer">상세 보기</a>
+                <a href={`${process.env.REACT_APP_SERVER}/book/detail/${book.isbn13}`}>상세 보기</a>
               </div>
             ))
           ) : (
@@ -41,7 +39,7 @@ const Slide = ({ items = [], itemsPerSlide }) => {
         </div>
       </div>
 
-      <button classNameName="slider-button next" onClick={goToNextSlide}>
+      <button className="slider-button next" onClick={goToNextSlide}>
         &#62;
       </button>
     </div>

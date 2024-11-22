@@ -4,7 +4,7 @@ import Header from './comp/Header';
 import Navbar from './comp/Navbar';
 import Footer from './comp/Footer';
 import Home from './pages/Home';
-import BookDetail from './pages/BookDetail';
+import BookDetail from './pages/books/BookDetail';
 
 const App = () => {
   return (

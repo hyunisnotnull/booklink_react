@@ -4,7 +4,7 @@ import '../css/Footer.css';
 const Footer = () => {
   return (
     <footer id="footer">
-    <div classNameName="footer-wrap">
+    <div className="footer-wrap">
         <div className="business-info">
             <h4 className="business-title">(주)도서링크 사업자 정보</h4>
             <p className="business-text">상호 : (주)도서링크</p>

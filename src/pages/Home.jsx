@@ -32,7 +32,7 @@ const Home = () => {
 
   return (
     <article>
-        <div classNameName="home">
+        <div className="home">
             <div>
                 이벤트 & 키워드, 급상승 자리
             </div>
