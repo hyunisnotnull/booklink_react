@@ -64,7 +64,9 @@ const BookDetail = () => {
     <div className="book-detail-container">
       <div className="book-detail-top">
         <div className="book-image">
-          <img src={bookDetail.bookImageURL} alt={bookDetail.bookname} />
+          <div className="book-thum">
+            <img src={bookDetail.bookImageURL} alt={bookDetail.bookname} />
+          </div>
           <div className="book-actions">
             <button
               className={`favorite-button ${isFavorited ? 'active' : ''}`}
@@ -83,7 +85,8 @@ const BookDetail = () => {
           </div>
         </div>
         <div className="book-info">
-          <h2>{bookDetail.bookname}</h2>
+          <h1>{bookDetail.bookname}</h1>
+          <br />
           <p>
             <strong>저자:</strong>{' '}
             {bookDetail.authors?.replace(/^(저자:|지은이:)\s*/, '')}
@@ -97,9 +100,11 @@ const BookDetail = () => {
         </div>
       </div>
       <hr />
-      <div className="book-description">
-        <h3>책 설명</h3>
-        <p>{bookDetail.description}</p>
+      <div className="book-description-wrap">
+        <div className="book-description">
+          <h3>책 설명</h3>
+          <p>{bookDetail.description}</p>
+        </div>
       </div>
       <hr />
       <div className="nonon">
