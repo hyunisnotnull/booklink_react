@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
-import '../../css/BookDetail.css';
+import '../../css/books/BookDetail.css';
 import '../../css/Home.css';
 
 const BookDetail = () => {
