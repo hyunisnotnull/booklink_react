@@ -108,12 +108,14 @@ const BookDetail = () => {
       <div className="book-description-wrap">
         <div className="book-description">
           <h2>책 설명</h2>
+          <br />
           <p>{cleanHTMLText(bookDetail.description)}</p>
         </div>
       </div>
       <hr />
-      <div className="nonon">
-        <h3>주제 연관 도서</h3>
+      <div className="book-related">
+        <h2>주제 연관 도서</h2>
+        <br />
         <Slide items={bookRelated} itemsPerSlide={itemsPerSlide} />
       </div>
     </div>

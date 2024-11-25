@@ -7,13 +7,13 @@ export const cleanHTMLText = (text) => {
   
   export const cleanBookName = (name) => {
     // ':' 뒤 내용 제거 및 '()' 패턴 제거
-    return name?.replace(/\s*:.*/, '').replace(/^\(.*?\)\s*/, '').trim();
+    return name?.replace(/\s*[:=].*/, '').replace(/^\(.*?\)\s*/, '').trim();
   };
 
   export const extractAuthors = (authors) => {
     // 저자 정보만 추출
     return authors
-      ?.split(';')
+      ?.split(/[,;]/)
       .map((author) => 
         author
         .replace(/^(저자:|지은이:|글:|지음|글·그림:)\s*/, '')

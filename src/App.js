@@ -6,6 +6,7 @@ import Footer from './pages/include/Footer';
 import Home from './pages/Home';
 import BookDetail from './pages/books/BookDetail';
 import SearchBook from './pages/books/SearchBook';
+import SearchLibrary from './pages/books/SearchLibrary';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/search_book" element={<SearchBook />} />
+        <Route path="/search_library" element={<SearchLibrary />} />
         <Route path="/book/detail/:bookID" element={<BookDetail />} />
         {/* 다른 페이지를 추가하려면 여기에 Route를 추가 */}
       </Routes>

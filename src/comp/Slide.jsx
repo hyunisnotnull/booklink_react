@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { cleanHTMLText, cleanBookName, extractAuthors, extractTranslator } from '../js/Textfilter.js';
+import { cleanBookName, extractAuthors } from '../js/Textfilter.js';
 import '../css/Slide.css';
 
 const Slide = ({ items = [], itemsPerSlide }) => {  
