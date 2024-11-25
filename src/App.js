@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Header from './comp/Header';
-import Navbar from './comp/Navbar';
-import Footer from './comp/Footer';
+import Header from './pages/include/Header';
+import Navbar from './pages/include/Navbar';
+import Footer from './pages/include/Footer';
 import Home from './pages/Home';
 import BookDetail from './pages/books/BookDetail';
 import SearchBook from './pages/books/SearchBook';
