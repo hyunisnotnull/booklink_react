@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from '../../comp/Pagination';
 import '../../css/books/SearchBook.css';
 
 const SearchBook = () => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const initialTitle = queryParams.get('title') || '';
+
     // 입력 필드의 값들
-    const [title, setTitle] = useState('');
+    const [title, setTitle] = useState(initialTitle);
     const [author, setAuthor] = useState('');
     const [publisher, setPublisher] = useState('');
     const [isbn13, setIsbn13] = useState('');
@@ -13,7 +18,7 @@ const SearchBook = () => {
     
     // 검색 버튼 클릭 시 저장되는 값들
     const [searchParams, setSearchParams] = useState({
-        title: '',
+        title: initialTitle,
         author: '',
         publisher: '',
         isbn13: ''
@@ -29,33 +34,40 @@ const SearchBook = () => {
 
     // useEffect
     useEffect(() => {
-        const fetchResults = async () => {
-        setLoading(true);
-
-        const params = { 
-            ...searchParams, // 검색 조건에 맞게 요청
-            pageNo,
-            sort: sortOption,
-        };
-
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_SERVER}/book/search_book`, { params });
-            const searchResults = response.data.books ? response.data.books.map(item => item.doc) : [];
-            const total = response.data.totalCount;
-
-            setBooks(searchResults);
-            setTotalCount(Math.ceil(total / 10));
-            setMessage(`[총 ${parseInt(total)}건] "${searchParams.title || searchParams.author || searchParams.publisher || searchParams.isbn13 || '전체'}"에 대한 결과입니다.`);
-        } catch (error) {
-            console.error('검색 오류:', error);
-            setErrorMessage('서버에 문제가 발생했습니다. 다시 시도해주세요.');
+        const titleFromQuery = queryParams.get('title');
+        if (titleFromQuery && titleFromQuery !== title) {
+            setTitle(titleFromQuery);
+            setSearchParams({ ...searchParams, title: titleFromQuery });
+            setPageNo(1); 
         }
 
-        setLoading(false);
+        const fetchResults = async () => {
+            setLoading(true);
+
+            const params = { 
+                ...searchParams,
+                pageNo,
+                sort: sortOption,
+            };
+
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_SERVER}/book/search_book`, { params });
+                const searchResults = response.data.books ? response.data.books.map(item => item.doc) : [];
+                const total = response.data.totalCount;
+
+                setBooks(searchResults);
+                setTotalCount(Math.ceil(total / 10));
+                setMessage(`[총 ${parseInt(total)}건] "${searchParams.title || searchParams.author || searchParams.publisher || searchParams.isbn13 || '전체'}"에 대한 결과입니다.`);
+            } catch (error) {
+                console.error('검색 오류:', error);
+                setErrorMessage('올바르지 않은 검색어입니다. 다시 시도해주세요.');
+            }
+
+            setLoading(false);
         };
 
         fetchResults();
-    }, [pageNo, searchParams, sortOption]);
+    }, [location.search, searchParams, pageNo, sortOption]);
 
     // 검색 함수
     const handleSearch = async () => {
@@ -96,7 +108,7 @@ const SearchBook = () => {
         setMessage(`[총 "${parseInt(total)}"건] "${title || author || publisher || isbn13 || '전체'}"에 대한 결과입니다.`);
         } catch (error) {
         console.error('검색 오류:', error);
-        setErrorMessage('서버에 문제가 발생했습니다. 다시 시도해주세요.');
+        setErrorMessage('올바르지 않은 검색어입니다. 다시 시도해주세요.');
         }
 
         setLoading(false);
@@ -197,7 +209,7 @@ const SearchBook = () => {
                     <p className="search-book-authors">{book.authors}</p>
                     <p className="search-book-publisher">{book.publisher}</p>
                     <p className="search-book-isbn">ISBN : {book.isbn13}</p>
-                    <a href="#none" className="search-book-detail-link">상세정보</a>
+                    <a href={`/book/detail/${book.isbn13 || book.set_isbn13}`} className="search-book-detail-link">상세정보</a>
                 </div>
                 </li>
             ))}

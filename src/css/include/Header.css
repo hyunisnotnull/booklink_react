@@ -1,0 +1,107 @@
+/* src/css/Header.css */
+.header {
+  padding: 10px 20px;
+  background-color: #282c34;
+}
+
+.header_wrap {
+  display: flex;
+  align-items: center; 
+  justify-content: space-between;
+  max-width: 1200px; /* 최대 너비 설정 */
+  margin: 0 auto; /* 중앙 정렬 */
+}
+
+.header .logo h1{
+  color: #fff;
+  font-size: 24px;
+}
+
+.header .search {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.auth {
+  display: flex; /* 메뉴 항목들을 가로로 나열 */
+  align-items: center; /* 수직 중앙 정렬 */
+  margin-left: auto;
+}
+
+.auth a {
+  color: #fff;
+  margin-right: 15px; /* 메뉴 항목 간격 조정 */
+  text-decoration: none; /* 밑줄 제거 */
+  transition: color 0.3s; /* 색상 변경 시 부드럽게 전환 */
+}
+
+a {
+  text-decoration: none;
+}
+
+/* 검색바 스타일 */
+#searchBook {
+  display: flex;                
+  align-items: center;          
+  border-radius: 5px;          
+  overflow: hidden;             
+  background-color: white;      
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-left: 300px;
+  margin-right: 1px;
+  /* margin: 0 auto; */
+}
+
+#keyword {
+  border: none;                 
+  padding: 10px;               
+  font-size: 16px;             
+  flex-grow: 1;                
+  outline: none;               
+  width: 200px;                /* 너비를 적절히 설정 */
+}
+
+#keyword::placeholder {
+  color: #aaa;                 
+}
+
+#searchBook button {
+  padding: 10px 15px;         
+  background-color: white;  
+  color: white;                
+  border: none;                
+  cursor: pointer;             
+  transition: background-color 0.3s; 
+  margin-left: 10px;          
+  font-size: 16px;            /* 아이콘 크기 조정 */
+}
+
+#searchBook button span {
+  display: inline-block;       /* 이모지가 버튼 중앙에 오도록 */
+  vertical-align: middle;      /* 수직 정렬 */
+}
+
+select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px; /* 간격 조정 */
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.input-container {
+  position: relative; /* 버튼의 위치 설정을 위한 부모 */
+  width: 70%; /* 전체 너비의 비율 설정 */
+}
+
+input[id="keyword"] {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%; /* 부모 너비에 맞춤 */
+  box-sizing: border-box; /* 패딩 포함 계산 */
+}
