@@ -1,32 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import Pagination from '../../comp/Pagination';
-import '../../css/books/SearchBook.css';
+import '../../css/books/SearchLibrary.css';
 
 const SearchLibrary = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const initialTitle = queryParams.get('title') || '';
-  const initialRegion = queryParams.get('region') || '';
-  const initialIsbn = queryParams.get('isbn') || '';
+
+  const {Tmapv2} = window;
 
   // 입력 필드 상태
-  const [title, setTitle] = useState(initialTitle);
-  const [isbn, setIsbn] = useState(initialIsbn);
-  const [region, setRegion] = useState(initialRegion);
+  const [title, setTitle] = useState('');
+  const [isbn, setIsbn] = useState('');
+  const [region, setRegion] = useState('');
+
+  // 검색 버튼 클릭 시 업데이트)
+  const [searchParams, setSearchParams] = useState({
+    title: title,
+    isbn: '',
+    region: '',
+  });
 
   // 검색 결과 상태
   const [libraries, setLibraries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
   const [pageNo, setPageNo] = useState(1);
   const [totalCount, setTotalCount] = useState(1);
 
-  const regionOptions = [
-    { name: '전체', code: '' },
+  const regionOptions = useMemo(() => [
+    { name: '지역', code: '' },
     { name: '서울', code: '11' },
     { name: '부산', code: '21' },
     { name: '대구', code: '22' },
@@ -43,35 +45,37 @@ const SearchLibrary = () => {
     { name: '경북', code: '37' },
     { name: '경남', code: '38' },
     { name: '제주', code: '39' },
-  ];
+  ], []);
 
+  // 검색 조건, 페이지 번호가 변경되면 데이터를 가져옴
   useEffect(() => {
-    if (initialTitle || initialIsbn) {
-      fetchLibraries();
-    }
-  }, [location.search, pageNo]);
+    if (!searchParams.title && !searchParams.isbn && !searchParams.region) return;
 
-  const fetchLibraries = async () => {
-    setLoading(true);
-    const params = { title, isbn, region, pageNo };
+    const fetchLibraries = async () => {
+      setLoading(true);
+      const params = { ...searchParams, pageNo };
 
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_SERVER}/book/search_library`, { params });
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_SERVER}/book/search_library`, { params });
 
-      const fetchLibraries = response.data.libraries ? response.data.libraries.map(item => item.lib) : [];
-      const total = response.data.totalCount;
+        const fetchLibraries = response.data.libraries ? response.data.libraries.map(item => item.lib) : [];
+        const total = response.data.totalCount;
 
-      setLibraries(fetchLibraries);
-      setTotalCount(Math.ceil(total / 10));
-      setMessage(`[총 ${total}건] "${regionOptions.find(opt => opt.code === region)?.name || '전체'}" 지역의 검색 결과입니다.`);
+        setLibraries(fetchLibraries);
+        setTotalCount(Math.ceil(total / 10));
+        setMessage(`[총 ${total}건] "${regionOptions.find(opt => opt.code === searchParams.region)?.name || '지역'}" 지역의 검색 결과입니다.`);
+      
+      } catch (error) {
+        console.error('도서관 검색 오류:', error);
+        setErrorMessage('입력한 정보를 다시 확인해주세요.');
+      
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    } catch (error) {
-      console.error('도서관 검색 오류:', error);
-      setErrorMessage('입력한 정보를 다시 확인해주세요.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchLibraries();
+  }, [searchParams, pageNo, regionOptions]);  
 
   const handleSearch = () => {
     setErrorMessage('');
@@ -87,8 +91,8 @@ const SearchLibrary = () => {
       return;
     }
 
+    setSearchParams({ title, isbn, region });
     setPageNo(1);
-    fetchLibraries();
   };
 
   const handlePageChange = (newPage) => {
@@ -110,6 +114,8 @@ const SearchLibrary = () => {
             disabled={isbn !== ''} // ISBN 입력 시 비활성화
           />
         </label>
+      </div>
+      <div className="library-search-form">
         <label>ISBN&nbsp;:&nbsp;
           <input
             type="text"
@@ -119,6 +125,8 @@ const SearchLibrary = () => {
             disabled={title !== ''} // 제목 입력 시 비활성화
           />
         </label>
+      </div>
+      <div className="library-search-form">
         <label>지역&nbsp;:&nbsp;
           <select value={region} onChange={(e) => setRegion(e.target.value)}>
             {regionOptions.map((option) => (
@@ -128,10 +136,11 @@ const SearchLibrary = () => {
             ))}
           </select>
         </label>
-        <button onClick={handleSearch} disabled={loading}>
-          {loading ? '검색 중...' : '검색'}
-        </button>
       </div>
+
+      <button className="library-search-button" onClick={handleSearch} disabled={loading}>
+        {loading ? '검색 중...' : '검색'}
+      </button>
 
       {/* 메시지 출력 */}
       {message && <p className="library-message">{message}</p>}
