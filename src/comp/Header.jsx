@@ -13,7 +13,7 @@ const Header = () => {
         <input type="text" placeholder="검색어를 입력하세요." />
       </div>
       <div className="auth">
-        <a href='#none'>로그인</a>
+        <a href='/signin'>로그인</a>
         <a href='#none'>회원가입</a>
       </div>
     </header>
