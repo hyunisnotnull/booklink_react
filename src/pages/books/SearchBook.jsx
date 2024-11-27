@@ -76,20 +76,20 @@ const SearchBook = () => {
 
         // 검색할 때만 searchParams 갱신
         setSearchParams({
-        title,
-        author,
-        publisher,
-        isbn13,
+            title,
+            author,
+            publisher,
+            isbn13,
         });
 
         setPageNo(1); // 검색 시 첫 번째 페이지로 리셋
 
         const params = {
-        title,
-        author,
-        publisher,
-        isbn13,
-        pageNo: 1 // 페이지 번호도 1로 초기화
+            title,
+            author,
+            publisher,
+            isbn13,
+            pageNo: 1 // 페이지 번호도 1로 초기화
         };
 
         try {
@@ -130,20 +130,20 @@ const SearchBook = () => {
     // 정렬 함수
     const handleSortChange = (sortType) => {
         setSortOption(sortType);
+        setPageNo(1);
     };
 
     return (
         <div className="book-search-container">
         <h1 className="book-search-title">도서 상세검색</h1>
             <div className="sort-options">
-                <span>정렬 기준: </span>
-                <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('title'); }}>도서명순</a> | &nbsp;
-                <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('pubYear'); }}>출판년도순</a> | &nbsp;
-                <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('loanCount'); }}>대출건수순</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('isbn'); }} className={sortOption === 'isbn' ? 'active' : ''}>ISBN순</a>|
+                <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('pubYear'); }} className={sortOption === 'pubYear' ? 'active' : ''}>출판년도순</a>|
+                <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('loanCount'); }} className={sortOption === 'loanCount' ? 'active' : ''}>대출건수순</a>
             </div>
         <hr />
         <div className="book-search-form">
-            <label>제목 &nbsp;:&nbsp;
+            <label>제목 &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
             <input 
                 type="text" 
                 value={title} 
@@ -153,7 +153,7 @@ const SearchBook = () => {
             </label>
         </div>
         <div className="book-search-form">
-            <label>저자 &nbsp;:&nbsp;
+            <label>저자 &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
             <input 
                 type="text" 
                 value={author} 
@@ -173,7 +173,7 @@ const SearchBook = () => {
             </label>
         </div>
         <div className="book-search-form">
-            <label>ISBN &nbsp;:&nbsp;
+            <label>ISBN &nbsp;&nbsp;&nbsp;:&nbsp;
             <input 
                 type="text" 
                 value={isbn13} 
@@ -195,7 +195,6 @@ const SearchBook = () => {
             <hr />
             <br />
             <h2 className="search-results-title">도서 리스트</h2>
-            <hr />
             <ul className="search-book-items">
             {books.map((book, index) => (
                 <li key={index} className="search-book-item">

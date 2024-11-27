@@ -4,7 +4,7 @@ import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
 import { cleanHTMLText, cleanBookName, extractAuthors, extractTranslator } from '../../js/Textfilter.js';
 import '../../css/books/BookDetail.css';
-import '../../css/Slide.css';
+import '../../css/include/Slide.css';
 
 const BookDetail = () => {
   const { bookID } = useParams(); // URL에서 bookID 가져오기

@@ -1,6 +1,6 @@
 import React, { useState, useEffect  } from 'react';
 import { cleanBookName, extractAuthors } from '../js/Textfilter.js';
-import '../css/Slide.css';
+import '../css/include/Slide.css';
 
 const Slide = ({ items = [], itemsPerSlide, autoSlide = false }) => {  
   const [currentSlide, setCurrentSlide] = useState(0);
