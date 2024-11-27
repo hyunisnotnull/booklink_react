@@ -1,14 +1,37 @@
 import React, { useState } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import DaumPostcode from 'react-daum-postcode';
 
 
 const Signup = () => {
 
+    const [uZipcode, setUZipcode] = useState(""); // 우편번호
+    const [uAddress, setUAddress] = useState(""); // //api상의 주소
+    const [uDetailAddress, setUDetailAddress] = useState(""); //상세 주소
+    // const [detail2address, setDetail2address] = useState(""); //상세주소
+    // const {addDocument, response } = useFirestore('manmul');
+    const [openPostcode, setOpenPostcode] = useState(false); //카카오api
+
+    const clickButton =() =>{
+        setOpenPostcode(current => !current);
+    }
+
+    const selectAddress = (data) => {
+        console.log(`
+                주소: ${data.address},
+                우편번호: ${data.zonecode}
+            `)
+            setUZipcode(data.zonecode);
+            setUAddress(data.address)
+            setOpenPostcode(false);
+    }
+ 
+
+
     // Hook
     const [uId, setUId] = useState('');
     const [uPw, setUPw] = useState('');
-    const [uMail, setUMail] = useState('');
     const [uGender, setUGender] = useState(0);
     const [uAge, setUAge] = useState(0);
     const [uPhone, setUPhone] = useState('');
@@ -41,6 +64,10 @@ const Signup = () => {
     //     setErrors(newErrors);
     //     return Object.keys(newErrors).length === 0;
     // }
+
+    const uDetailAddressHandler = (e) => {
+        setUDetailAddress(e.target.value);
+    }
 
     const uIdChangeHandler = (e) => {
         setUId(e.target.value);
@@ -81,13 +108,20 @@ const Signup = () => {
         navigate('/login');
     }
 
-    const signUpBtnClickHandler = async(e) => {
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+
         const formData = new FormData();
         formData.append("u_id", uId);
         formData.append("u_pw", uPw);
+        formData.append("u_sex", uGender);
+        formData.append("u_age", uAge);
+        formData.append("u_phone", uPhone);
+        formData.append("u_post_address", uAddress);
+        formData.append("u_detail_address", uDetailAddress);
 
         try{
-            const url=`http://localhost:3000/user/signup`;
+            const url=`${process.env.REACT_APP_SERVER}/user/signup`;
             const res = await axios.post(url, formData);
             console.log(res);
             if (res.data.result) {
@@ -95,8 +129,9 @@ const Signup = () => {
             }
 
         } catch(err){
-            console.log(err)
-            console.log(err.response.status);
+            console.log('1');
+            console.log(err);
+            // console.log(err.response.status);
         }
     }
 
@@ -165,7 +200,7 @@ const Signup = () => {
     return (
         <div id="sign_up_modal">
             <div className="sign_up_modal_content">
-            <form >
+            <form onSubmit={handleSubmit}>
                 <div className="close" onClick={closeClickHandler}>
                     X
                 </div>
@@ -175,7 +210,40 @@ const Signup = () => {
                 <br />
                 <input name="u_pw" className="txt_basic" type="password" value={uPw} onChange={uPwChangeHandler} placeholder="비밀번호를 입력하세요" />
 
-                <button className="btn_basic" onClick={signUpBtnClickHandler}>회원 가입</button>
+                <br />
+                <input name="u_phone" className="txt_basic" type="text" value={uPhone} onChange={uPhoneChangeHandler} placeholder="휴대전화번호" />
+
+                <br />
+                <select name="u_sex" className="gen" id="gen" value={uGender} onChange={uGenderChangeHandler}>
+                    <option value="">성별</option>
+                    <option value="M">남성</option>
+                    <option value="W">여성</option>
+                </select>
+                <select name="u_age" id="age" value={uAge} onChange={uAgeChangeHandler}>
+                    <option value="">나이</option>
+                    <option value="10">10대</option>
+                    <option value="20">20대</option>
+                    <option value="30">30대</option>
+                    <option value="40">40대</option>
+                    <option value="50">50대</option>
+                    <option value="60">60대 이상</option>
+                </select>
+                <br />
+                <input type="hidden" id="user_post_address" name="u_post_address" />
+                <div class="address-group">
+                    <input type="text" id="user_postcode" name="u_postcode"  value={uZipcode} placeholder="우편번호" readonly required />
+                    <input type="button" class="address-btn" onClick={clickButton} value="우편번호 찾기" /> {openPostcode &&
+                        <DaumPostcode
+                            onComplete={selectAddress}  // 값을 선택할 경우 실행되는 이벤트
+                            autoClose={false} // 값을 선택할 경우 사용되는 DOM을 제거하여 자동 닫힘 설정
+                            defaultQuery='판교역로 235' // 팝업을 열때 기본적으로 입력되는 검색어
+                            />}
+                </div>
+                <input type="text" id="user_address" name="u_address"  value={uAddress} placeholder="주소" required />
+                <input type="text" id="user_detailAddress" name="u_detail_address"  value={uDetailAddress} onChange={uDetailAddressHandler} placeholder="상세주소" required />
+                <br />
+                <br />
+                <button type="submit" className="btn_basic" >회원 가입</button>
                 </form>
             </div>
         </div>
@@ -185,32 +253,3 @@ const Signup = () => {
 export default Signup;
 
 
-// {/* 
-//                 <br />
-//                 <input name="u_phone" className="txt_basic" type="text" value={uPhone} onChange={uPhoneChangeHandler} placeholder="휴대전화번호" />
-
-//                 <br />
-//                 <select name="u_sex" className="gen" id="gen" value={uGender} onChange={uGenderChangeHandler}>
-//                     <option value="">성별</option>
-//                     <option value="M">남성</option>
-//                     <option value="W">여성</option>
-//                 </select>
-//                 <select name="u_age" id="age" value={uAge} onChange={uAgeChangeHandler}>
-//                     <option value="">나이</option>
-//                     <option value="10">10대</option>
-//                     <option value="20">20대</option>
-//                     <option value="30">30대</option>
-//                     <option value="40">40대</option>
-//                     <option value="50">50대</option>
-//                     <option value="60">60대 이상</option>
-//                 </select>
-//                 <br />
-//                 <input type="hidden" id="user_post_address" name="u_post_address" />
-//                 <div class="address-group">
-//                     <input type="text" id="user_postcode" name="u_postcode" placeholder="우편번호" readonly required />
-//                     <input type="button" class="address-btn" onclick="userAddress()" value="우편번호 찾기" />
-//                 </div>
-//                 <input type="text" id="user_address" name="u_address" placeholder="주소" required />
-//                 <input type="text" id="user_detailAddress" name="u_detail_address" placeholder="상세주소" required />
-//                 <br />
-//                 <br /> */}
