@@ -1,25 +1,76 @@
 /* Pagination 컴포넌트 스타일 */
 .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-  }
-  
-  .pagination button {
-    padding: 10px;
-    margin: 0 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .pagination button:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-  
-  .pagination span {
-    font-size: 16px;
-    margin: 0 10px;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* 페이지네이션 버튼 기본 스타일 */
+.pagination button {
+  padding: 10px 16px;
+  margin: 0 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* 버튼 hover 효과 */
+.pagination button:hover {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* 활성화된 페이지 번호 스타일 */
+.pagination button.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  border-color: #007bff;
+}
+
+/* 비활성화된 버튼 스타일 */
+.pagination button:disabled {
+  background-color: #f0f0f0;
+  color: #ccc;
+  cursor: not-allowed;
+  border-color: #ddd;
+}
+
+/* '처음', '이전', '다음', '끝' 버튼 스타일 (타원형 제거) */
+.pagination button:first-child,
+.pagination button:last-child {
+  padding: 10px 16px; 
+  font-size: 14px;
+  border-radius: 5px; 
+}
+
+/* '처음', '이전', '다음', '끝' 버튼 hover 효과 */
+.pagination button:first-child:hover,
+.pagination button:last-child:hover {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* 비활성화된 '처음'과 '끝' 버튼에서 hover 효과 없애기 */
+.pagination button:first-child:disabled:hover,
+.pagination button:last-child:disabled:hover {
+  background-color: #f0f0f0;
+  color: #ccc;
+  border-color: #ddd;
+}
+
+/* 페이지 번호 간격 */
+.pagination span {
+  font-size: 14px;
+  color: #777;
+  margin: 0 10px;
+}
