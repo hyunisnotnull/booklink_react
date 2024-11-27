@@ -14,7 +14,7 @@ const Header = () => {
       </div>
       <div className="auth">
         <a href='/signin'>로그인</a>
-        <a href='#none'>회원가입</a>
+        <a href='/signup'>회원가입</a>
       </div>
     </header>
   );
