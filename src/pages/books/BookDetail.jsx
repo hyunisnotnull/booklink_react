@@ -14,7 +14,7 @@ const BookDetail = () => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isRead, setIsRead] = useState(false);
 
-  const itemsPerSlide = 4; // 슬라이더당 표시할 아이템 수
+  const itemsPerSlide = 5; // 슬라이더당 표시할 아이템 수
 
   useEffect(() => {
     // 도서 정보 가져오기
