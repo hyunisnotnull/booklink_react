@@ -4,6 +4,8 @@ import Header from './pages/include/Header';
 import Navbar from './pages/include/Navbar';
 import Footer from './pages/include/Footer';
 import Home from './pages/Home';
+import Signin from './pages/user/Signin';
+import Signup from './pages/user/Signup';
 import BookDetail from './pages/books/BookDetail';
 import SearchBook from './pages/books/SearchBook';
 import SearchLibrary from './pages/books/SearchLibrary';
@@ -18,6 +20,8 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/signin" element={<Signin />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/search_book" element={<SearchBook />} />
         <Route path="/search_library" element={<SearchLibrary />} />
         <Route path="/book/detail/:bookID" element={<BookDetail />} />

@@ -33,8 +33,8 @@ const Header = () => {
           </div>
         </form>
         <div className="auth">
-          <a href='#none'>로그인</a>
-          <a href='#none'>회원가입</a>
+          <a href='/signin'>로그인</a>
+          <a href='/signup'>회원가입</a>
         </div>
       </div>
     </header>
