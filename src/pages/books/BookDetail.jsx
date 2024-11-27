@@ -4,7 +4,7 @@ import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
 import { cleanHTMLText, cleanBookName, extractAuthors, extractTranslator } from '../../js/Textfilter.js';
 import '../../css/books/BookDetail.css';
-import '../../css/Home.css';
+import '../../css/Slide.css';
 
 const BookDetail = () => {
   const { bookID } = useParams(); // URL에서 bookID 가져오기
@@ -57,9 +57,9 @@ const BookDetail = () => {
     setIsRead(!isRead); // 읽음 상태 토글
   };
 
-  // if (!bookDetail || Object.keys(bookDetail).length === 0) {
-  //   return <p>Loading...</p>;
-  // }
+  if (!bookDetail || Object.keys(bookDetail).length === 0) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="book-detail-container">

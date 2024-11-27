@@ -129,6 +129,13 @@
   margin: 5px 0;
 }
 
+.library-item a {
+  display: block; /* 블록 요소로 변경 */
+  margin-top: 10px; /* 적절한 간격 추가 */
+  color: #007bff;
+  text-decoration: none;
+}
+
 /* 지도 영역 */
 #map_div {
   flex: 1.8;
