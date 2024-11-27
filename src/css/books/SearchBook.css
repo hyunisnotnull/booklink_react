@@ -1,0 +1,161 @@
+/* 전체 컨테이너 */
+.book-search-container {
+    width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* 도서 리스트 */
+  .search-results-container,
+  .default-book-results-container {
+    margin-top: 30px;
+    text-align: center; /* 도서 리스트 제목 중앙정렬 */
+  }
+  
+  /* 도서 리스트 제목 */
+  .search-results-title,
+  .default-book-results-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .book-search-title {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  
+  /* 검색 폼 중앙 정렬 */
+  .book-search-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .book-search-form label {
+    font-size: 1rem;
+    margin-right: 10px;
+  }
+  
+  /* 입력창 스타일 */
+  .book-search-form input {
+    width: 300px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  /* 검색 버튼 */
+  .book-search-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto;
+  }
+  
+  /* 검색 버튼 비활성화 상태 */
+  .book-search-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* 검색 결과 또는 에러 메시지 출력 */
+  .book-error-message {
+    color: red;
+    font-size: 1rem;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .book-message {
+    color: rgb(0, 0, 0);
+    font-size: 1rem;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  /* 도서 리스트 (1개씩 표시) */
+  .search-book-items {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+    text-align: center; /* 도서 항목 가운데 정렬 */
+  }
+  
+  /* 각 도서 항목 */
+  .search-book-item {
+    display: flex; /* 이미지와 설명을 나란히 표시 */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd; /* 항목 간 구분선 추가 */
+    padding-bottom: 20px; /* 구분선과 항목 간 간격 */
+  }
+  
+  .search-book-item:first-child {
+    border-top: 2px solid rgba(0, 123, 255, 0.5);
+    padding-top: 20px;
+  }
+
+  .search-book-item:last-child {
+    border-bottom: none; /* 마지막 항목은 구분선 제거 */
+  }
+  
+  /* 구분선의 스타일 */
+  .search-book-item {
+    border-color: rgba(0, 123, 255, 0.5); /* 구분선 색상 (파란색으로 변경 가능) */
+    transition: all 0.3s ease; /* 부드러운 전환 효과 */
+  }
+  
+  /* 도서 이미지 */
+  .search-book-image {
+    width: 150px;
+    height: 220px;
+    object-fit: contain;
+    margin-right: 20px; /* 이미지와 설명 사이에 간격 */
+  }
+  
+  /* 도서 세부사항 */
+  .search-book-details {
+    font-size: 0.9rem;
+    color: #555;
+    text-align: left; /* 설명 부분은 왼쪽 정렬 */
+  }
+  
+  /* 도서 이름 */
+  .search-book-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  /* 저자, 출판사, ISBN */
+  .search-book-authors,
+  .search-book-publisher,
+  .search-book-isbn {
+    margin: 5px 0;
+    color: #777;
+    font-size: 0.9rem;
+  }
+  
+  /* 상세정보 링크 */
+  .search-book-detail-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .search-book-detail-link:hover {
+    text-decoration: underline;
+  }
+  

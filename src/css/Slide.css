@@ -18,6 +18,11 @@
     margin: 10px;
     text-align: center;
   }
+
+  .book-item img {
+    width: 200px;
+    height: 270px;
+  }
   
   .book-image {
     width: 150px;
