@@ -3,28 +3,44 @@
   margin: 50px auto;
 }
 
+.content-container {
+  display: flex;
+  gap: 100px;
+}
+
 .book-list {
   display: flex;
   overflow: hidden; /* 초과된 아이템 숨기기 */
-  width: 80%; /* 슬라이더가 보이는 너비 */
-  margin: 0 20px;
-  max-height: 400px; /* 최대 높이 설정 */
-  overflow-y: auto;
+  margin: 0;
+  max-height: 430px; /* 최대 높이 설정 */
+  justify-content: space-between;
 }
 
 .book-items {
   display: flex;
   transition: transform 0.3s ease-in-out;
+  width: auto;
+  justify-content: space-between;
 }
 
 .book-item {
-  width: 200px; /* 각 책 항목의 너비 */
+  width: 210px; /* 각 책 항목의 너비 */
   text-align: center;
   background: #f4f4f4;
   border-radius: 10px;
-  padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 0 10px;
+  margin: 0 19px;
+  justify-content: space-between;
+}
+
+/* 첫 번째 항목에 왼쪽 여백 제거 */
+.book-items .book-item:first-child {
+  margin-left: 0; /* 첫 번째 항목 왼쪽 여백 없애기 */
+}
+
+/* 마지막 항목에 오른쪽 여백 제거 */
+.book-items .book-item:last-child {
+  margin-right: 0; /* 마지막 항목 오른쪽 여백 없애기 */
 }
 
 .book-image {
@@ -34,14 +50,111 @@
 }
 
 .book-item p {
-  margin: 10px 0;
+  margin: 10px 12px;
+  text-overflow: ellipsis; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-align: center; 
+}
+
+.book-item p strong {
+  display: block; 
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .book-item a {
+  display: block;  
   text-decoration: none;
   color: #007bff;
+  margin-bottom: 10px; 
+  text-align: center;
 }
 
 .book-item a:hover {
   text-decoration: underline;
+}
+
+.event-section {
+  width: 75%;  
+  position: relative;
+}
+
+.event-section .book-list {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+
+.event-section .book-items {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+}
+
+.event-section .book-item {
+  width: 100%;  
+  cursor: pointer;  
+  padding: 0;
+  background-color: #fff;
+  margin: 0 auto;
+}
+
+.event-section .event-item {
+  display: block;  
+  text-align: center;
+  width: 100%;
+}
+
+.event-section .event-image {
+  width: 100%; 
+  height: 300px;  
+  object-fit: contain;
+  border-radius: 5px; 
+}
+
+.event-section .event-item h5 {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.slider {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  position: relative;
+  padding: 0;
+}
+
+.slider-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 2rem;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10;  
+}
+
+.slider-button:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.prev {
+  left: 1px; 
+}
+
+.next {
+  right: 1px; 
+}
+
+.home-hr {
+  border: none; 
+  border-top: 2px solid #007bff; 
+  margin-top: 5px;
+  margin-bottom: 25px;  
 }
