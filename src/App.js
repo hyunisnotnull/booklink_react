@@ -9,7 +9,7 @@ import Signup from './pages/user/Signup';
 import BookDetail from './pages/books/BookDetail';
 import SearchBook from './pages/books/SearchBook';
 import SearchLibrary from './pages/books/SearchLibrary';
-import TmapComponent from './pages/TmapComponent';
+import LibraryDetail from './pages/books/LibraryDetail';
 
 
 const App = () => {
@@ -25,7 +25,7 @@ const App = () => {
         <Route path="/search_book" element={<SearchBook />} />
         <Route path="/search_library" element={<SearchLibrary />} />
         <Route path="/book/detail/:bookID" element={<BookDetail />} />
-        <Route path="/map" element={<TmapComponent />} />
+        <Route path="/book/library_detail/:libCode" element={<LibraryDetail />} />
         {/* 다른 페이지를 추가하려면 여기에 Route를 추가 */}
       </Routes>
 

@@ -1,128 +1,144 @@
 /* 전체 컨테이너 */
 .library-search-container {
-    width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .search-results-container {
-    min-height: 400px;
-    margin-top: 30px;
-    text-align: center; /* 리스트 제목 중앙정렬 */
-  }
+  width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-  .search-results-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 15px;
-  }
+/* 검색 폼 */
+.library-search-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
 
-  /* 검색 제목 */
-  .library-search-title {
-    text-align: center;
-    margin-bottom: 15px;
-  }
-  
-  /* 검색 폼 */
-  .library-search-form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-  }
-  
-  .library-search-form label {
-    font-size: 1rem;
-    margin-right: 10px;
-  }
-  
-  .library-search-form input {
-    width: 300px;
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .library-search-form select {
-    width: 300px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
-  }
+.library-search-title {
+  text-align: center;
+  margin-bottom: 15px;
+}
 
-  /* 검색 버튼 */
-  .library-search-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: block;
-    margin: 20px auto;
-  }
-  
-  .library-search-form button:disabled {
-    background-color: #b8b8b8;
-    cursor: not-allowed;
-  }
-  
-  /* 메시지 출력 */
-  .library-message {
-    color: rgb(0, 0, 0);
-    font-size: 1rem;
-    margin-top: 10px;
-    text-align: center;
-  }
-  
-  .library-error-message {
-    color: red;
-    font-size: 1rem;
-    margin-top: 10px;
-    text-align: center;
-  }
-  
-  /* 검색 결과 리스트 */
-  .library-items {
-    list-style-type: none;
-    padding: 0;
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .library-item {
-    align-items: center;
-    width: 100%;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 20px;
-    border-color: rgba(0, 123, 255, 0.5);
-    transition: all 0.3s ease;
-  }
-  
-  .library-item:first-child {
-    border-top: 2px solid rgba(0, 123, 255, 0.5);
-    padding-top: 20px;
-  }
-  
-  .library-item:last-child {
-    border-bottom: none;
-  }
-  
-  /* 도서관 정보 */
-  .library-item h3 {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
-  }
-  
-  .library-item p {
-    font-size: 0.9rem;
-    color: #555;
-    margin: 5px 0;
-  }
+.library-search-form label {
+  font-size: 1rem;
+  margin-right: 10px;
+}
+
+.library-search-form input {
+  width: 300px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.library-search-form select {
+  width: 300px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+}
+
+/* 검색 버튼 */
+.library-search-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  margin: 20px auto;
+}
+
+.library-search-form button:disabled {
+  background-color: #b8b8b8;
+  cursor: not-allowed;
+}
+
+/* 메시지 출력 */
+.library-message {
+  color: rgb(0, 0, 0);
+  font-size: 1rem;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.library-error-message {
+  color: red;
+  font-size: 1rem;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.search-results-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* 검색 결과와 지도 컨텐츠 */
+.search-results-content {
+  display: flex;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+/* 검색 결과 리스트 */
+.library-items {
+  flex: 1;
+  height: 480px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  list-style-type: none;
+}
+
+.library-item {
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+  border-color: rgba(0, 123, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.library-item:first-child {
+  border-top: 2px solid rgba(0, 123, 255, 0.5);
+  padding-top: 10px;
+}
+
+.library-item:last-child {
+  border-bottom: none;
+}
+
+/* 도서관 정보 */
+.library-item h3 {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.library-item p {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 5px 0;
+}
+
+.library-item a {
+  display: block; /* 블록 요소로 변경 */
+  margin-top: 10px; /* 적절한 간격 추가 */
+  color: #007bff;
+  text-decoration: none;
+}
+
+/* 지도 영역 */
+#map_div {
+  flex: 1.8;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
