@@ -123,16 +123,19 @@ const Signup = () => {
         try{
             const url=`${process.env.REACT_APP_SERVER}/user/signup`;
             const res = await axios.post(url, formData);
-            console.log(res);
-            if (res.data.result) {
-                console.log('성공');
+            console.log(res.data)
+            if (res.data.u_ID !== null) {
+                navigate('/signin');
+            } else {
+                alert('이미 사용중인 ID입니다.');
+                navigate('/signup');
             }
-
+   
         } catch(err){
-            console.log('1');
             console.log(err);
             // console.log(err.response.status);
         }
+
     }
 
     //     // 유효성 검사
@@ -197,6 +200,14 @@ const Signup = () => {
     //     navigate('/login');
     // }
 
+    const style = {
+        background : "rgba(0,0,0,0.25)",
+                                position : "fixed",
+                                left:"25%",
+                                top:"0",
+                                height:"100%",
+                                width:"50%",
+      }
     return (
         <div id="sign_up_modal">
             <div className="sign_up_modal_content">
@@ -234,6 +245,7 @@ const Signup = () => {
                     <input type="text" id="user_postcode" name="u_postcode"  value={uZipcode} placeholder="우편번호" readonly required />
                     <input type="button" class="address-btn" onClick={clickButton} value="우편번호 찾기" /> {openPostcode &&
                         <DaumPostcode
+                            style={style}
                             onComplete={selectAddress}  // 값을 선택할 경우 실행되는 이벤트
                             autoClose={false} // 값을 선택할 경우 사용되는 DOM을 제거하여 자동 닫힘 설정
                             defaultQuery='판교역로 235' // 팝업을 열때 기본적으로 입력되는 검색어
