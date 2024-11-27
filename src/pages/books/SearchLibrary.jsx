@@ -210,16 +210,15 @@ const SearchLibrary = () => {
           <div className="library-items">
             <ul>
               {libraries.map((library, index) => (
-                <li
-                  key={index}
-                  className="library-item"
-                  onClick={() => handleLibraryClick(library.latitude, library.longitude)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <h3>{library.libName}</h3>
+                <li className="library-item">
+                  <h3
+                    key={index}
+                    onClick={() => handleLibraryClick(library.latitude, library.longitude)}
+                    style={{ cursor: 'pointer' }}>
+                  {library.libName}</h3>
                   <p>주소: {library.address}</p>
                   <p>전화번호: {library.tel}</p>
-                  <p>상세보기: {library.homepage}</p>
+                  <a href={`/book/library_detail/${library.libCode}`}>상세 보기</a>
                 </li>
               ))}
             </ul>
