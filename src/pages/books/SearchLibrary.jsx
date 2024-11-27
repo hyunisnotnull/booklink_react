@@ -77,7 +77,7 @@ const SearchLibrary = () => {
 
   // 지도 초기화
   useEffect(() => {
-    if (window.Tmapv2) {
+    if (!map) {
       const newMap = new window.Tmapv2.Map('map_div', {
         center: new window.Tmapv2.LatLng(37.5665, 126.978),
         width: '100%',
@@ -88,7 +88,7 @@ const SearchLibrary = () => {
     } else {
       console.error('Tmap API 로드 실패 또는 Tmapv2 객체 없음');
     }
-  }, []);
+  }, [map]);
 
   // 지도에 마커 추가
   useEffect(() => {
@@ -201,8 +201,10 @@ const SearchLibrary = () => {
 
       <div className="search-results-container">
         {/* 검색 결과 제목 */}
+        <hr />
+        <br />
         <h2 className="search-results-title">도서관 검색 결과</h2>
-        
+        <hr />
         <div className="search-results-content">
           {/* 검색 결과 리스트 */}
           <div className="library-items">

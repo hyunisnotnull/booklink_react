@@ -72,10 +72,6 @@
   text-align: center;
 }
 
-.search-results-container {
-  margin-top: 30px;
-}
-
 .search-results-title {
   text-align: center;
   font-size: 1.5rem;
@@ -86,6 +82,7 @@
 /* 검색 결과와 지도 컨텐츠 */
 .search-results-content {
   display: flex;
+  margin-top: 20px;
   gap: 10px;
 }
 
