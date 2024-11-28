@@ -1,6 +1,6 @@
 import React, { useState, useEffect  } from 'react';
 import { cleanBookName, extractAuthors } from '../js/Textfilter.js';
-import '../css/Slide.css';
+import '../css/include/Slide.css';
 
 const Slide = ({ items = [], itemsPerSlide, autoSlide = false }) => {  
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -41,9 +41,11 @@ const Slide = ({ items = [], itemsPerSlide, autoSlide = false }) => {
     <div className="slider">
 
       <div className="book-list">
-      <button className="slider-button prev" onClick={goToPreviousSlide}>
-        &#60;
-      </button>
+      {currentItems.length > 0 && (
+        <button className="slider-button prev" onClick={goToPreviousSlide}>
+          &#60;
+        </button>
+      )}
         <div className="book-items">
           {currentItems.length > 0 ? (
             currentItems.map((item, index) => (
@@ -81,9 +83,11 @@ const Slide = ({ items = [], itemsPerSlide, autoSlide = false }) => {
             <p>항목이 없습니다.</p>
           )}
         </div>
-      <button className="slider-button next" onClick={goToNextSlide}>
-        &#62;
-      </button>
+        {currentItems.length > 0 && (
+        <button className="slider-button next" onClick={goToNextSlide}>
+          &#62;
+        </button>
+      )}
       </div>
 
     </div>

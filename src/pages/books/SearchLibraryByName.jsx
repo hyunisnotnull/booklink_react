@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from '../../comp/Pagination';
 import '../../css/books/SearchLibrary.css';
 
-const SearchLibrary = () => {
-  const [title, setTitle] = useState('');
-  const [isbn, setIsbn] = useState('');
+const SearchLibraryByName = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialTitle = queryParams.get('title') || '';
+
+  const [title, setTitle] = useState(initialTitle);
   const [region, setRegion] = useState('');
-  const [searchParams, setSearchParams] = useState({ title: '', isbn: '', region: '' });
+  const [searchParams, setSearchParams] = useState({
+    title: initialTitle, 
+    region: '' 
+  });
+
   const [libraries, setLibraries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -42,7 +50,12 @@ const SearchLibrary = () => {
 
   // 검색 조건, 페이지 번호가 변경될 때 데이터 가져오기
   useEffect(() => {
-    if (!searchParams.title && !searchParams.isbn && !searchParams.region) return;
+    const titleFromQuery = queryParams.get('title');
+    if (titleFromQuery && titleFromQuery !== title) {
+        setTitle(titleFromQuery);
+        setSearchParams({ ...searchParams, title: titleFromQuery });
+        setPageNo(1); 
+    }
 
     const fetchLibraries = async () => {
       setLoading(true);
@@ -50,19 +63,14 @@ const SearchLibrary = () => {
 
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_SERVER}/book/search_library`,
+          `${process.env.REACT_APP_SERVER}/library/search_library_name`,
           { params }
         );
 
-        const fetchedLibraries = response.data.libraries
-          ? response.data.libraries.map((item) => item.lib)
-          : [];
-        const total = response.data.totalCount;
-
-        setLibraries(fetchedLibraries);
-        setTotalCount(Math.ceil(total / 10));
+        setLibraries(response.data);
+        setTotalCount(Math.ceil(response.data.length / 10));
         setMessage(
-          `[총 ${total}건] "${regionOptions.find((opt) => opt.code === searchParams.region)?.name || '지역'}" 지역의 검색 결과입니다.`
+          `[총 ${response.data.length}건] "${regionOptions.find((opt) => opt.code === searchParams.region)?.name || '지역'}" 지역의 검색 결과입니다.`
         );
       } catch (error) {
         console.error('도서관 검색 오류:', error);
@@ -101,13 +109,13 @@ const SearchLibrary = () => {
     // 새로운 마커 추가
     const bounds = new window.Tmapv2.LatLngBounds(); // 지도 경계를 계산할 객체
     const newMarkers = libraries.map((library) => {
-      const position = new window.Tmapv2.LatLng(library.latitude, library.longitude);
+      const position = new window.Tmapv2.LatLng(library.l_LATITUDE, library.l_LONGITUDE);
       bounds.extend(position); // 각 위치를 경계에 추가
 
       const marker = new window.Tmapv2.Marker({
         position: position,
         map: map,
-        title: library.libName,
+        title: library.l_NAME,
       });
       return marker;
     });
@@ -122,16 +130,12 @@ const SearchLibrary = () => {
     setErrorMessage('');
     setMessage('');
 
-    if (!region) {
+    if (!title) {
       setErrorMessage('지역을 선택해야 합니다.');
       return;
     }
-    if ((title && isbn) || (!title && !isbn)) {
-      setErrorMessage('도서 제목 또는 ISBN 중 하나만 입력해야 합니다.');
-      return;
-    }
 
-    setSearchParams({ title, isbn, region });
+    setSearchParams({ title });
     setPageNo(1);
   };
 
@@ -159,19 +163,6 @@ const SearchLibrary = () => {
             value={title}
             placeholder="도서 제목을 입력하세요"
             onChange={(e) => setTitle(e.target.value)}
-            disabled={isbn !== ''} // ISBN 입력 시 비활성화
-          />
-        </label>
-      </div>
-      <div className="library-search-form">
-        <label>
-          ISBN&nbsp;:&nbsp;
-          <input
-            type="text"
-            value={isbn}
-            placeholder="ISBN을 입력하세요"
-            onChange={(e) => setIsbn(e.target.value)}
-            disabled={title !== ''} // 제목 입력 시 비활성화
           />
         </label>
       </div>
@@ -212,12 +203,12 @@ const SearchLibrary = () => {
               {libraries.map((library, index) => (
                 <li key={index} className="library-item">
                   <h3
-                    onClick={() => handleLibraryClick(library.latitude, library.longitude)}
+                    onClick={() => handleLibraryClick(library.l_LATITUDE, library.l_LONGITUDE)}
                     style={{ cursor: 'pointer' }}>
-                  {library.libName}</h3>
-                  <p>주소: {library.address}</p>
-                  <p>전화번호: {library.tel}</p>
-                  <a href={`/book/library_detail/${library.libCode}`}>상세 보기</a>
+                  {library.l_NAME}</h3>
+                  <p>주소: {library.l_ADDRESS}</p>
+                  <p>전화번호: {library.l_TEL}</p>
+                  <a href={`/book/library_detail/${library.l_CODE}`}>상세 보기</a>
                 </li>
               ))}
             </ul>
@@ -238,4 +229,4 @@ const SearchLibrary = () => {
   );
 };
 
-export default SearchLibrary;
+export default SearchLibraryByName;

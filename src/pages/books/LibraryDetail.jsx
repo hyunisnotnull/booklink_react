@@ -4,12 +4,13 @@ import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
 import { cleanHTMLText, cleanBookName, extractAuthors, extractTranslator } from '../../js/Textfilter.js';
 import '../../css/books/BookDetail.css';
-import '../../css/Slide.css';
+import '../../css/include/Slide.css';
 
 const LibraryDetail = () => {
   const { libCode } = useParams(); // URL에서 libCode 가져오기
   const [libDetail, setLibDetail] = useState([]);  // 도서관 정보 상태 추가
   const [newArrivalBook, setNewArrivalBook] = useState([]); // 도서관 신착 도서 상태 추가
+  
 
   const itemsPerSlide = 4; // 슬라이더당 표시할 아이템 수
 
@@ -38,6 +39,7 @@ const LibraryDetail = () => {
       });
 
   }, [libCode]);
+
 
   if (!libDetail || Object.keys(libDetail).length === 0) {
     return <p>Loading...</p>;

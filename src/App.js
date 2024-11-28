@@ -12,6 +12,7 @@ import SearchBook from './pages/books/SearchBook';
 import SearchLibrary from './pages/books/SearchLibrary';
 import LibraryDetail from './pages/books/LibraryDetail';
 import { useCookies } from 'react-cookie'; // useCookies import
+import SearchLibraryByName from './pages/books/SearchLibraryByName';
 
 
 const App = () => {
@@ -37,9 +38,10 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/Modify" element={<Modify />} />
         <Route path="/search_book" element={<SearchBook />} />
-        <Route path="/search_library" element={<SearchLibrary />} />
+        <Route path="/book/search_library" element={<SearchLibrary />} />
         <Route path="/book/detail/:bookID" element={<BookDetail />} />
         <Route path="/book/library_detail/:libCode" element={<LibraryDetail />} />
+        <Route path="/library/search_library_name" element={<SearchLibraryByName />} />
         {/* 다른 페이지를 추가하려면 여기에 Route를 추가 */}
       </Routes>
 
