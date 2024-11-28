@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React , { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import DaumPostcode from 'react-daum-postcode';
 
 
-const Signup = () => {
+const Modify = () => {
 
     const [uZipcode, setUZipcode] = useState(""); // 우편번호
     const [uAddress, setUAddress] = useState(""); // //api상의 주소
@@ -65,6 +65,22 @@ const Signup = () => {
     //     return Object.keys(newErrors).length === 0;
     // }
 
+    useEffect(() => {
+  
+        // axios.get(`${process.env.REACT_APP_SERVER}/user/getUser`)
+        //   .then(response => {
+        //     const { events } = response.data;
+        //     setEvents(events ? events.filter(event => event.e_active === 1) : []);
+        //     console.log('events:::', events);
+        //   })
+        //   .catch(error => {
+        //     console.error('Error fetching events:', error);
+        //   });
+
+    }, []);
+          
+
+
     const uDetailAddressHandler = (e) => {
         setUDetailAddress(e.target.value);
     }
@@ -121,7 +137,7 @@ const Signup = () => {
         formData.append("u_detail_address", uDetailAddress);
 
         try{
-            const url=`${process.env.REACT_APP_SERVER}/user/signup`;
+            const url=`${process.env.REACT_APP_SERVER}/user/modify`;
             const res = await axios.post(url, formData);
             console.log('data---> ', res.data)
             if (res.data.u_ID !== null) {
@@ -262,6 +278,6 @@ const Signup = () => {
     );
 }
 
-export default Signup;
+export default Modify;
 
 
