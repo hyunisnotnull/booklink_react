@@ -9,8 +9,16 @@ const Header = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     const keyword = document.getElementById('keyword').value; // 입력된 검색어 가져오기
+    const searchType = document.getElementById('searchType').value; // 선택된 검색 유형 가져오기
+
     if (keyword) {
-      navigate(`/search_book?title=${encodeURIComponent(keyword)}`); // search_book 페이지로 이동하면서 검색어 전달
+      if (searchType === 'book') {
+        // 도서 검색
+        navigate(`/search_book?title=${encodeURIComponent(keyword)}`);
+      } else if (searchType === 'library') {
+        // 도서관 검색
+        navigate(`/library/search_library_name?title=${encodeURIComponent(keyword)}`);
+      }
     }
   };
 
