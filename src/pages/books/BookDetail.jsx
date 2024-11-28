@@ -5,119 +5,186 @@ import Slide from '../../comp/Slide.jsx';
 import { cleanHTMLText, cleanBookName, extractAuthors, extractTranslator } from '../../js/Textfilter.js';
 import '../../css/books/BookDetail.css';
 import '../../css/include/Slide.css';
+import '../../css/include/Loading.css';
 
 const BookDetail = () => {
   const { bookID } = useParams(); // URL에서 bookID 가져오기
   const [bookDetail, setBookDetail] = useState([]);  // 도서 정보 상태 추가
   const [bookRelated, setBookRelated] = useState([]); // 주제 연관 도서 상태 추가
+  const [libraries, setLibraries] = useState([]); // 주변 도서 소장 도서관 
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [isFavorited, setIsFavorited] = useState(false);
   const [isRead, setIsRead] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 위치 정보를 저장할 상태
+  const [location, setLocation] = useState({
+    latitude: null,
+    longitude: null,
+  });
+
   const itemsPerSlide = 5; // 슬라이더당 표시할 아이템 수
 
   useEffect(() => {
-    // 도서 정보 가져오기
-    axios
-      .get(`${process.env.REACT_APP_SERVER}/book/detail/${bookID}`)
-      .then((response) => {
-        const { bookDetail, bookRelated } = response.data;
-        console.log('1',bookDetail.detail.length);
+      if (location.latitude === null || location.longitude === null) {
 
-        console.log('2',bookRelated);
+        getLocation();
+      }
+      console.log('location:::', location);
+      setIsLoading(true);
 
-        if (bookDetail && bookDetail.detail.length > 0) {
-          console.log('hi');
-          setBookDetail(bookDetail.detail[0].book);
-        }
-        console.log('222',bookDetail);
+      // 대출 가능한 도서관 정보 가져오기
+      if (location.latitude !== null && location.longitude !== null) {
+        axios
+          .get(`${process.env.REACT_APP_SERVER}/library/loanAvailable`, {
+            params: {
+              bookID: bookID,
+              latitude: location.latitude,
+              longitude: location.longitude,
+            }
+          })
+          .then((response) => {
+            const { libraries } = response.data;
+            setLibraries(libraries || []); // 대출 가능한 도서관 리스트 설정
+            console.log('도서관쓰', libraries);
+          })
+          .catch((error) => {
+            console.error('Error fetching available libraries:', error);
+          });
+      } else {
+        // 위치 정보가 없으면 도서관 정보는 빈 배열로 설정
+        setLibraries([]);
+      }
 
-        setBookRelated(bookRelated ? bookRelated.map(item => item.book) : []);
+      // 도서 상세 정보 가져오기
+      axios
+        .get(`${process.env.REACT_APP_SERVER}/book/detail/${bookID}`)
+        .then((response) => {
+          const { bookDetail, bookRelated, libraries } = response.data;
+          if (bookDetail && bookDetail.detail.length > 0) {
+            setBookDetail(bookDetail.detail[0].book);
+          }
 
-        console.log('3',bookRelated);
-      })
-      .catch((error) => {
-        console.error('Error fetching book details:', error);
-      });
+          setBookRelated(bookRelated ? bookRelated.map(item => item.book) : []);
+        })
+        .catch((error) => {
+          console.error('Error fetching book details:', error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
 
-    // 로그인 여부 확인 (예: 토큰 존재 여부로 확인)
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsLoggedIn(true);
-    }
-  }, [bookID]);
+  }, [bookID, location]);
 
   const handleFavoriteClick = () => {
-    
     setIsFavorited(!isFavorited); // 찜하기 상태 토글
   };
 
   const handleReadClick = () => {
-    
     setIsRead(!isRead); // 읽음 상태 토글
   };
 
-  if (!bookDetail || Object.keys(bookDetail).length === 0) {
-    return <p>Loading...</p>;
-  }
+  // 위치 정보 함수
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("위치 정보 가져오기 실패", error);
+        }
+      );
+    } else {
+      console.error("Geolocation을 지원하지 않는 브라우저입니다.");
+    }
+  };
 
   return (
     <div className="book-detail-container">
-      <div className="book-detail-top">
-        <div className="book-image">
-          <div className="book-thum">
-            <img src={bookDetail.bookImageURL} alt={bookDetail.bookname} />
-          </div>
-          <div className="book-actions">
-            <button
-              className={`favorite-button ${isFavorited ? 'active' : ''}`}
-              onClick={handleFavoriteClick}
-            >
-              {isFavorited ? '찜 취소' : '찜하기'}
-            </button>
-            {isLoggedIn && (
-              <button
-                className={`read-button ${isRead ? 'active' : ''}`}
-                onClick={handleReadClick}
-              >
-                {isRead ? '읽음 취소' : '읽음 표시'}
-              </button>
-            )}
-          </div>
+      {isLoading ? (
+        <div className="loading-container">
+          <div className="loading-circle"></div>
         </div>
-        <div className="book-info">
-          <h1>{cleanBookName(bookDetail.bookname)}</h1>
-          <br />
-          <p>
-            <strong>저자:</strong> {extractAuthors(bookDetail.authors)}
-          </p>
-          {extractTranslator(bookDetail.authors) && (
-            <p>
-              <strong>옮긴이:</strong> {extractTranslator(bookDetail.authors)}
-            </p>
-          )}
-          <p><strong>출판사:</strong> {bookDetail.publisher}</p>
-          <p><strong>출판년도:</strong> {bookDetail.publication_year}</p>
-          <p><strong>주제분류:</strong> {bookDetail.class_nm}</p>
-          <p><strong>ISBN:</strong> {bookDetail.isbn13}</p>
+      ) : (
+        <>
+          <div className="book-detail-top">
+            <div className="book-image">
+              <div className="book-thum">
+                <img src={bookDetail.bookImageURL} alt={bookDetail.bookname} />
+              </div>
+              <div className="book-actions">
+                <button
+                  className={`favorite-button ${isFavorited ? 'active' : ''}`}
+                  onClick={handleFavoriteClick}
+                >
+                  {isFavorited ? '찜 취소' : '찜하기'}
+                </button>
+                {isLoggedIn && (
+                  <button
+                    className={`read-button ${isRead ? 'active' : ''}`}
+                    onClick={handleReadClick}
+                  >
+                    {isRead ? '읽음 취소' : '읽음 표시'}
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="book-info">
+              <h1>{cleanBookName(bookDetail.bookname)}</h1>
+              <br />
+              <p>
+                <strong>저자 :</strong> {extractAuthors(bookDetail.authors)}
+              </p>
+              {extractTranslator(bookDetail.authors) && (
+                <p>
+                  <strong>옮긴이 :</strong> {extractTranslator(bookDetail.authors)}
+                </p>
+              )}
+              <p><strong>출판사 :</strong> {bookDetail.publisher}</p>
+              <p><strong>출판년도 :</strong> {bookDetail.publication_year}</p>
+              <p><strong>주제분류 :</strong> {bookDetail.class_nm}</p>
+              <p><strong>ISBN:</strong> {bookDetail.isbn13}</p>
+              <hr />
+              <p><strong>주변 도서 소장 도서관 :</strong> </p>
+              <ul>
+                {libraries.length > 0 ? (
+                  libraries.slice(0, 5).map((library) => (
+                    <li key={library.libCode} className="loan-library">
+                      <h4>{library.libName} : 
+                        <span 
+                          className={library.loanAvailable === 'Y' ? 'loan-available' : 'loan-unavailable'}>
+                          {library.loanAvailable === 'Y' ? ' 대출 가능' : ' 대출 불가능'}
+                        </span>
+                      </h4>
+                    </li>
+                  ))
+                ) : (
+                  <p>대출 가능한 도서관이 없습니다.</p>
+                )}
+              </ul>
+            </div>
+          </div>
           <hr />
-          <p><strong>도서관:</strong> </p>
-        </div>
-      </div>
-      <hr />
-      <div className="book-description-wrap">
-        <div className="book-description">
-          <h2>책 설명</h2>
-          <br />
-          <p>{cleanHTMLText(bookDetail.description)}</p>
-        </div>
-      </div>
-      <hr />
-      <div className="book-related">
-        <h2>주제 연관 도서</h2>
-        <br />
-        <Slide items={bookRelated} itemsPerSlide={itemsPerSlide} />
-      </div>
+          <div className="book-description-wrap">
+            <div className="book-description">
+              <h2>책 설명</h2>
+              <br />
+              <p>{cleanHTMLText(bookDetail.description)}</p>
+            </div>
+          </div>
+          <hr />
+          <div className="book-related">
+            <h2>주제 연관 도서</h2>
+            <br />
+            <Slide items={bookRelated} itemsPerSlide={itemsPerSlide} />
+          </div>
+        </>
+      )}
     </div>
   );
 };
