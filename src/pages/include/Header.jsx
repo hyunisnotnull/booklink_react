@@ -1,10 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom'; 
+import { useJwt } from "react-jwt";
 
 import '../../css/include/Header.css';
 
-const Header = () => {
+const Header = (props) => {
   const navigate = useNavigate(); 
+  const { decodedToken, isExpired } = useJwt(props.cookie.token);
+
+  useEffect(() => {
+
+    console.log('----- uLoginId  header ----', props.uLoginId);
+    console.log('----- cokie  header ----', props.cookie);
+  }, [props.uLoginId, props.cookie, props.removeCookie] );
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -21,6 +29,13 @@ const Header = () => {
       }
     }
   };
+
+  const signOutClickHandler = (e) => {
+    e.preventDefault();
+    // props.setULoginId('');
+    props.removeCookie('token');
+    navigate('/');
+  }
 
   return (
     <header className="header">
@@ -41,8 +56,19 @@ const Header = () => {
           </div>
         </form>
         <div className="auth">
+
+    
           <a href='/signin'>로그인</a>
           <a href='/signup'>회원가입</a>
+    
+          {!isExpired ?
+          <>
+          <a href='/modify'>회원수정</a>
+          <a href='#none' onClick={signOutClickHandler} >로그아웃</a>
+          </>
+          :
+          <></>
+          }
         </div>
       </div>
     </header>
