@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from '../../comp/Pagination';
 import '../../css/books/SearchLibrary.css';
 
 const SearchLibraryByName = () => {
+  const mapRef = useRef(null); // 지도 DOM 참조
+  const isMapInitialized = useRef(false); // 지도 초기화 여부 추적
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const initialTitle = queryParams.get('title') || '';
@@ -28,34 +30,40 @@ const SearchLibraryByName = () => {
   const regionOptions = useMemo(
     () => [
       { name: '지역', code: '' },
-      { name: '서울', code: '11' },
-      { name: '부산', code: '21' },
-      { name: '대구', code: '22' },
-      { name: '인천', code: '23' },
-      { name: '광주', code: '24' },
-      { name: '대전', code: '25' },
-      { name: '울산', code: '26' },
-      { name: '세종', code: '29' },
-      { name: '경기', code: '31' },
-      { name: '강원', code: '32' },
-      { name: '충북', code: '33' },
-      { name: '충남', code: '34' },
-      { name: '전북', code: '35' },
-      { name: '경북', code: '37' },
-      { name: '경남', code: '38' },
-      { name: '제주', code: '39' },
+      { name: '서울', code: '서울특별시' },
+      { name: '부산', code: '부산광역시' },
+      { name: '대구', code: '대구광역시' },
+      { name: '인천', code: '인천광역시' },
+      { name: '광주', code: '광주광역시' },
+      { name: '대전', code: '대전광역시' },
+      { name: '울산', code: '울산광역시' },
+      { name: '세종', code: '세종특별자치시' },
+      { name: '경기', code: '경기도' },
+      { name: '강원', code: '강원특별자치도' },
+      { name: '충북', code: '충청북도' },
+      { name: '충남', code: '충청남도' },
+      { name: '전북', code: '전라북도' },
+      { name: '전남', code: '전라남도' },
+      { name: '경북', code: '경상북도' },
+      { name: '경남', code: '경상남도' },
+      { name: '제주', code: '제주특별자치도' },
     ],
     []
   );
 
-  // 검색 조건, 페이지 번호가 변경될 때 데이터 가져오기
   useEffect(() => {
     const titleFromQuery = queryParams.get('title');
     if (titleFromQuery && titleFromQuery !== title) {
-        setTitle(titleFromQuery);
-        setSearchParams({ ...searchParams, title: titleFromQuery });
-        setPageNo(1); 
+      setTitle(titleFromQuery);
+      setSearchParams({ title: titleFromQuery, region: '' });
+      setPageNo(1);
     }
+  }, [queryParams.get('title')]);
+
+  // 검색 조건, 페이지 번호가 변경될 때 데이터 가져오기
+  useEffect(() => {
+    if (!searchParams.title) return;
+    
 
     const fetchLibraries = async () => {
       setLoading(true);
@@ -67,10 +75,12 @@ const SearchLibraryByName = () => {
           { params }
         );
 
-        setLibraries(response.data);
-        setTotalCount(Math.ceil(response.data.length / 10));
+        const { libs, totalPages } = response.data;
+
+        setLibraries(libs);
+        setTotalCount(totalPages);
         setMessage(
-          `[총 ${response.data.length}건] "${regionOptions.find((opt) => opt.code === searchParams.region)?.name || '지역'}" 지역의 검색 결과입니다.`
+          `[총 ${response.data.totalItems}건] "${searchParams.title}"에 대한 검색 결과입니다.`
         );
       } catch (error) {
         console.error('도서관 검색 오류:', error);
@@ -81,22 +91,23 @@ const SearchLibraryByName = () => {
     };
 
     fetchLibraries();
-  }, [searchParams, pageNo, regionOptions]);
+  }, [searchParams, pageNo]);
 
   // 지도 초기화
   useEffect(() => {
-    if (!map) {
-      const newMap = new window.Tmapv2.Map('map_div', {
-        center: new window.Tmapv2.LatLng(37.5665, 126.978),
-        width: '100%',
-        height: '500px',
-        zoom: 13,
-      });
-      setMap(newMap);
-    } else {
-      console.error('Tmap API 로드 실패 또는 Tmapv2 객체 없음');
-    }
-  }, [map]);
+    if (isMapInitialized.current || !mapRef.current) return;
+    console.log('지도 초기화 진행');
+
+    const newMap = new window.Tmapv2.Map('map_div', {
+      center: new window.Tmapv2.LatLng(37.5665, 126.978),
+      width: '100%',
+      height: '500px',
+      zoom: 13,
+    });
+    
+    isMapInitialized.current = true; // 초기화 완료 상태로 설정
+    setMap(newMap);
+  }, [mapRef]);
 
   // 지도에 마커 추가
   useEffect(() => {
@@ -126,17 +137,42 @@ const SearchLibraryByName = () => {
     map.fitBounds(bounds);
   }, [map, libraries]);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     setErrorMessage('');
     setMessage('');
 
     if (!title) {
-      setErrorMessage('지역을 선택해야 합니다.');
+      setErrorMessage('제목은 필수 입력 사항입니다.');
       return;
     }
 
-    setSearchParams({ title });
-    setPageNo(1);
+    // 새로운 검색 파라미터 설정
+    const newSearchParams = { title, region, pageNo: 1 };
+    setSearchParams(newSearchParams);
+    
+    try {
+      setLoading(true);
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_SERVER}/library/search_library_name`,
+        { params: newSearchParams }
+      );
+
+      const { libs, totalPages } = response.data;
+      setLibraries(libs);
+      setTotalCount(totalPages);
+      setMessage(
+        `[총 ${response.data.totalItems}건] "${searchParams.title}"에 대한 검색 결과입니다.`
+      );
+    } catch (error) {
+      console.error('도서관 검색 오류:', error);
+      setErrorMessage('입력한 정보를 다시 확인해주세요.');
+    } finally {
+      setLoading(false);
+    }
+
+    setTitle('');
+    setRegion('');
   };
 
   const handlePageChange = (newPage) => {
@@ -161,7 +197,7 @@ const SearchLibraryByName = () => {
           <input
             type="text"
             value={title}
-            placeholder="도서 제목을 입력하세요"
+            placeholder="도서관 이름을 입력하세요"
             onChange={(e) => setTitle(e.target.value)}
           />
         </label>
@@ -215,7 +251,7 @@ const SearchLibraryByName = () => {
           </div>
 
           {/* 지도 표시 */}
-          <div id="map_div"></div>
+          <div id="map_div" ref={mapRef}></div>
         </div>
       </div>
 

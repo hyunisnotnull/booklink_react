@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
 import Pagination from '../../comp/Pagination';
 import '../../css/books/SearchLibrary.css';
 
 const SearchLibrary = () => {
+  const mapRef = useRef(null); // 지도 DOM 참조
+  const isMapInitialized = useRef(false); // 지도 초기화 여부 추적
   const [title, setTitle] = useState('');
   const [isbn, setIsbn] = useState('');
   const [region, setRegion] = useState('');
@@ -77,18 +79,19 @@ const SearchLibrary = () => {
 
   // 지도 초기화
   useEffect(() => {
-    if (!map) {
-      const newMap = new window.Tmapv2.Map('map_div', {
-        center: new window.Tmapv2.LatLng(37.5665, 126.978),
-        width: '100%',
-        height: '500px',
-        zoom: 13,
-      });
-      setMap(newMap);
-    } else {
-      console.error('Tmap API 로드 실패 또는 Tmapv2 객체 없음');
-    }
-  }, [map]);
+    if (isMapInitialized.current || !mapRef.current) return;
+    console.log('지도 초기화 진행');
+
+    const newMap = new window.Tmapv2.Map('map_div', {
+      center: new window.Tmapv2.LatLng(37.5665, 126.978),
+      width: '100%',
+      height: '500px',
+      zoom: 13,
+    });
+    
+    isMapInitialized.current = true; // 초기화 완료 상태로 설정
+    setMap(newMap);
+  }, [mapRef]);
 
   // 지도에 마커 추가
   useEffect(() => {
@@ -224,7 +227,7 @@ const SearchLibrary = () => {
           </div>
 
           {/* 지도 표시 */}
-          <div id="map_div"></div>
+          <div id="map_div" ref={mapRef}></div>
         </div>
       </div>
 
