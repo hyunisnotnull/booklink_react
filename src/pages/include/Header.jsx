@@ -1,18 +1,14 @@
 import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import { useJwt } from "react-jwt";
-
+import { useCookies } from 'react-cookie'; // useCookies import
 import '../../css/include/Header.css';
 
-const Header = (props) => {
+const Header = () => {
   const navigate = useNavigate(); 
-  const { decodedToken, isExpired } = useJwt(props.cookie.token);
+  const [cookie, setCookie, removeCookie] =  useCookies();
+  const { decodedToken, isExpired } = useJwt(cookie.token);
 
-  useEffect(() => {
-
-    console.log('----- uLoginId  header ----', props.uLoginId);
-    console.log('----- cokie  header ----', props.cookie);
-  }, [props.uLoginId, props.cookie, props.removeCookie] );
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -39,7 +35,7 @@ const Header = (props) => {
   const signOutClickHandler = (e) => {
     e.preventDefault();
     // props.setULoginId('');
-    props.removeCookie('token');
+    removeCookie('token');
     navigate('/');
   }
 
