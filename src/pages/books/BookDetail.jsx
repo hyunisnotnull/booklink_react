@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
-import { cleanHTMLText, cleanBookName, extractAuthors, extractTranslator } from '../../js/Textfilter.js';
+import { cleanHTMLText, extractAuthors, extractTranslator } from '../../js/Textfilter.js';
 import '../../css/books/BookDetail.css';
-import '../../css/include/Slide.css';
 import '../../css/include/Loading.css';
 
 const BookDetail = () => {
@@ -17,6 +16,7 @@ const BookDetail = () => {
   const [isRead, setIsRead] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isLibraryLoading, setIsLibraryLoading] = useState(true);
 
   // 위치 정보를 저장할 상태
   const [location, setLocation] = useState({
@@ -24,7 +24,7 @@ const BookDetail = () => {
     longitude: null,
   });
 
-  const itemsPerSlide = 5; // 슬라이더당 표시할 아이템 수
+  const itemsPerSlide = 4; // 슬라이더당 표시할 아이템 수
 
   useEffect(() => {
       if (location.latitude === null || location.longitude === null) {
@@ -32,6 +32,8 @@ const BookDetail = () => {
         getLocation();
       }
       console.log('location:::', location);
+
+      setIsLibraryLoading(true);
       setIsLoading(true);
 
       // 대출 가능한 도서관 정보 가져오기
@@ -51,17 +53,21 @@ const BookDetail = () => {
           })
           .catch((error) => {
             console.error('Error fetching available libraries:', error);
+          })
+          .finally(() => {
+            setIsLibraryLoading(false); // 도서관 로딩 완료
           });
       } else {
         // 위치 정보가 없으면 도서관 정보는 빈 배열로 설정
         setLibraries([]);
+        setIsLibraryLoading(false);
       }
 
       // 도서 상세 정보 가져오기
       axios
         .get(`${process.env.REACT_APP_SERVER}/book/detail/${bookID}`)
         .then((response) => {
-          const { bookDetail, bookRelated, libraries } = response.data;
+          const { bookDetail, bookRelated } = response.data;
           if (bookDetail && bookDetail.detail.length > 0) {
             setBookDetail(bookDetail.detail[0].book);
           }
@@ -106,7 +112,7 @@ const BookDetail = () => {
 
   return (
     <div className="book-detail-container">
-      {isLoading ? (
+      {isLoading || isLibraryLoading ? (
         <div className="loading-container">
           <div className="loading-circle"></div>
         </div>
@@ -115,7 +121,7 @@ const BookDetail = () => {
           <div className="book-detail-top">
             <div className="book-image">
               <div className="book-thum">
-                <img src={bookDetail.bookImageURL} alt={bookDetail.bookname} />
+                <img src={bookDetail.bookImageURL || "/img/defaultBook.png"} alt={bookDetail.bookname} />
               </div>
               <div className="book-actions">
                 <button
@@ -135,7 +141,7 @@ const BookDetail = () => {
               </div>
             </div>
             <div className="book-info">
-              <h1>{cleanBookName(bookDetail.bookname)}</h1>
+              <h1>{bookDetail.bookname}</h1>
               <br />
               <p>
                 <strong>저자 :</strong> {extractAuthors(bookDetail.authors)}
@@ -147,10 +153,15 @@ const BookDetail = () => {
               )}
               <p><strong>출판사 :</strong> {bookDetail.publisher}</p>
               <p><strong>출판년도 :</strong> {bookDetail.publication_year}</p>
-              <p><strong>주제분류 :</strong> {bookDetail.class_nm}</p>
-              <p><strong>ISBN:</strong> {bookDetail.isbn13}</p>
-              <hr />
-              <p><strong>주변 도서 소장 도서관 :</strong> </p>
+              <p>
+                <strong>주제분류 :</strong> 
+                {bookDetail.class_nm && bookDetail.class_nm.includes(' >  > ') 
+                  ? ' -' 
+                  : ` ${bookDetail.class_nm}`}
+              </p>
+              <p><strong>ISBN :</strong> {bookDetail.isbn13}</p>
+              <hr className="book-detail-hr" />
+              <p><strong>[주변 도서 소장 도서관]</strong> </p>
               <ul>
                 {libraries.length > 0 ? (
                   libraries.slice(0, 5).map((library) => (
@@ -169,17 +180,17 @@ const BookDetail = () => {
               </ul>
             </div>
           </div>
-          <hr />
+          <hr className="book-detail-bottom-hr" />
           <div className="book-description-wrap">
             <div className="book-description">
-              <h2>책 설명</h2>
+              <h2>책 소개</h2>
               <br />
-              <p>{cleanHTMLText(bookDetail.description)}</p>
+              <p>{bookDetail.description ? cleanHTMLText(bookDetail.description) : '책 소개가 존재하지 않습니다.'}</p>
             </div>
           </div>
-          <hr />
+          <hr className="book-detail-bottom-hr" />
           <div className="book-related">
-            <h2>주제 연관 도서</h2>
+            <h2>연관 도서</h2>
             <br />
             <Slide items={bookRelated} itemsPerSlide={itemsPerSlide} />
           </div>
