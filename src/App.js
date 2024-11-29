@@ -11,42 +11,39 @@ import BookDetail from './pages/books/BookDetail';
 import SearchBook from './pages/books/SearchBook';
 import SearchLibrary from './pages/books/SearchLibrary';
 import LibraryDetail from './pages/books/LibraryDetail';
-import { useCookies } from 'react-cookie'; // useCookies import
 import SearchLibraryByName from './pages/books/SearchLibraryByName';
+
+
+
 
 
 const App = () => {
 
-  const [uLoginId, setULoginId] = useState('');
-  const [cookie, setCookie, removeCookie] =  useCookies(['token']);
-
-  useEffect(() => {
-
-    console.log('----- uLoginId ----', uLoginId);
-    console.log('----- cokie ----', cookie);
-  }, [uLoginId, cookie]);
-
 
   return (
-    <Router>
-      <Header cookie={cookie} removeCookie={removeCookie}/>
-      <Navbar />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signin" element={<Signin uLoginId={uLoginId} setULoginId={setULoginId} cookie={cookie} />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/Modify" element={<Modify />} />
-        <Route path="/search_book" element={<SearchBook />} />
-        <Route path="/book/search_library" element={<SearchLibrary />} />
-        <Route path="/book/detail/:bookID" element={<BookDetail />} />
-        <Route path="/book/library_detail/:libCode" element={<LibraryDetail />} />
-        <Route path="/library/search_library_name" element={<SearchLibraryByName />} />
-        {/* 다른 페이지를 추가하려면 여기에 Route를 추가 */}
-      </Routes>
+      <Router>
+        <Header />
+        <Navbar />
 
-      <Footer />
-    </Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/Modify" element={<Modify />} />
+          <Route path="/search_book" element={<SearchBook />} />
+          <Route path="/book/search_library" element={<SearchLibrary />} />
+          <Route path="/book/detail/:bookID" element={<BookDetail />} />
+          <Route path="/book/library_detail/:libCode" element={<LibraryDetail />} />
+          <Route path="/library/search_library_name" element={<SearchLibraryByName />} />
+          {/* 다른 페이지를 추가하려면 여기에 Route를 추가 */}
+        </Routes>
+
+        <Footer />
+      </Router>
+    
+
+
   );
 };
 

@@ -2,9 +2,15 @@ import React , { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import DaumPostcode from 'react-daum-postcode';
-
+import { useJwt } from "react-jwt";
+import { useCookies } from 'react-cookie'; // useCookies import
+import { jwtDecode } from "jwt-decode";
 
 const Modify = () => {
+    
+    const [cookie, setCookie, removeCookie] =  useCookies();
+    const decoded = jwtDecode(cookie.token);
+    const { decodedToken, isExpired } = useJwt(cookie.token);
 
     const [uZipcode, setUZipcode] = useState(""); // 우편번호
     const [uAddress, setUAddress] = useState(""); // //api상의 주소
@@ -26,8 +32,9 @@ const Modify = () => {
             setUAddress(data.address)
             setOpenPostcode(false);
     }
- 
-
+    
+    
+  
 
     // Hook
     const [uId, setUId] = useState('');
@@ -66,16 +73,35 @@ const Modify = () => {
     // }
 
     useEffect(() => {
-  
-        // axios.get(`${process.env.REACT_APP_SERVER}/user/getUser`)
-        //   .then(response => {
-        //     const { events } = response.data;
-        //     setEvents(events ? events.filter(event => event.e_active === 1) : []);
-        //     console.log('events:::', events);
-        //   })
-        //   .catch(error => {
-        //     console.error('Error fetching events:', error);
-        //   });
+
+        const fetchUserData = async () => {
+
+            console.log(`${process.env.REACT_APP_SERVER}/user/getuser/${decoded.userId}`)
+            try {
+              const response = await axios.get(`${process.env.REACT_APP_SERVER}/user/getuser/${decoded.userId}`);
+              const data = response.data;
+              setUId(data.u_ID);
+              setUPw();
+              setUGender(data.u_SEX);
+              setUAge(data.u_AGE);
+              setUPhone(data.u_PHONE);
+              setUAddress(data.u_POST_ADDRESS); // //api상의 주소
+              setUDetailAddress(data.u_DETAIL_ADDRESS); //상세 주소
+
+            } catch (error) {
+              alert('유저 데이터를 가져오는 데 실패했습니다.');
+              navigate('/')  
+            } finally {
+
+            }
+          };
+          if ( !isExpired ){
+
+            console.log(decodedToken)
+            fetchUserData();
+          } else {
+            navigate('/')
+          }
 
     }, []);
           
@@ -91,6 +117,7 @@ const Modify = () => {
 
     const uPwChangeHandler = (e) => {
         setUPw(e.target.value);
+        console.log(uPw)
     }
 
     // const uNickChangeHandler = (e) => {
@@ -120,9 +147,6 @@ const Modify = () => {
         setUPhone(changePhoneNumber);
     }
 
-    const closeClickHandler = () => {
-        navigate('/login');
-    }
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -216,6 +240,34 @@ const Modify = () => {
     //     navigate('/login');
     // }
 
+    const deleteBtnClickHandler = () => {
+        console.log('deleteBtnClickHandler()');
+ 
+        if (window.confirm('정말로 탈퇴 하시겠습니까?')) {
+         // DELETE MEMBER INFO
+
+         axios.get(`${process.env.REACT_APP_SERVER}/user/delete/${uId}`)
+         .then(response => {
+           const data = response.data;
+           console.log(data);
+           alert('계정 삭제가 완료되었습니다.');  // notification UI
+           removeCookie('token');
+           navigate('/')               // 화면 전환
+           
+         })
+         .catch(error => {
+           console.error('Error deleteing user:', error);
+         });
+ 
+ 
+ 
+ 
+         } else {
+             alert('계정 삭제가 취소되었습니다.');  // notification UI
+ 
+         }
+     }
+
     const style = {
         background : "rgba(0,0,0,0.25)",
                                 position : "fixed",
@@ -228,11 +280,9 @@ const Modify = () => {
         <div id="sign_up_modal">
             <div className="sign_up_modal_content">
             <form onSubmit={handleSubmit}>
-                <div className="close" onClick={closeClickHandler}>
-                    X
-                </div>
-                <h2>회원 가입</h2>
-                <input name="u_id" className="txt_basic" type="text" value={uId} onChange={uIdChangeHandler} placeholder="아이디 입력하세요" />
+                <h2>회원 수정</h2>
+                <input name="u_id" className="txt_basic" type="text" value={uId} onChange={uIdChangeHandler} readonly />
+
 
                 <br />
                 <input name="u_pw" className="txt_basic" type="password" value={uPw} onChange={uPwChangeHandler} placeholder="비밀번호를 입력하세요" />
@@ -271,7 +321,8 @@ const Modify = () => {
                 <input type="text" id="user_detailAddress" name="u_detail_address"  value={uDetailAddress} onChange={uDetailAddressHandler} placeholder="상세주소" required />
                 <br />
                 <br />
-                <button type="submit" className="btn_basic" >회원 가입</button>
+                <button type="submit" className="btn_basic" >수정</button>
+                <button onClick={deleteBtnClickHandler} className="btn_basic" >삭제</button>
                 </form>
             </div>
         </div>

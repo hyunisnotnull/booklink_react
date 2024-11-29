@@ -1,22 +1,15 @@
 import React , { useState, useEffect } from 'react';
 import axios from 'axios';
-// import { useCookies } from 'react-cookie'; // useCookies import
+import { useCookies } from 'react-cookie'; // useCookies import
 import { useNavigate } from "react-router-dom";
 
-
-const Signin = (props) => {
-
+const Signin = () => {
   // const [uLoginId, setULoginId] = useState('');
   const [uId, setUId] = useState('');
   const [uPw, setUPw] = useState('');
-  // const [cookie, setCookie] =  useCookies(['token']);
+  const [cookie, setCookie] =  useCookies();
   const navigate = useNavigate(); 
 
-  useEffect(() => {
-
-    console.log('----- uLoginId ----', props.uLoginId);
-    console.log('----- cokie ----', props.cookie);
-  }, [props.uLoginId, props.cookie]);
   
 
   const uIdChangeHandler = (e) => {
@@ -38,16 +31,14 @@ const Signin = (props) => {
         const url=`${process.env.REACT_APP_SERVER}/signin`;
         const res = await axios.post(url, formData, { withCredentials: true });
         if (res.data.userId !== undefined) {
-          props.setULoginId(res.data.userId);
           navigate('/');
         } else {
-          props.setULoginId(res.data.userId);
+
           alert('입력 데이터 오류!!')
           navigate('/signin');
         }
 
     } catch(err){
-      props.setULoginId('');
       navigate('/signin');
     }
 
