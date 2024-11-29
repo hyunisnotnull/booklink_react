@@ -2,7 +2,7 @@
 .book-search-container {
   width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 50px;
   font-family: Arial, sans-serif;
 }
 
@@ -169,9 +169,10 @@
 /* 저자, 출판사, ISBN */
 .search-book-authors,
 .search-book-publisher,
+.search-book-publication_year,
+.search-book-loan_count,
 .search-book-isbn {
   margin: 5px 0;
-  color: #777;
   font-size: 0.9rem;
 }
 
@@ -224,8 +225,20 @@ box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
 }
 
 /* 정렬 기준 링크의 클릭 방지 상태 (비활성화된 링크) */
-.sort-options a:disabled {
+/* .sort-options a:disabled {
 color: #ccc;
 cursor: not-allowed;
 background-color: #f0f0f0;
+} */
+
+.sort-options .order-option {
+  font-weight: bold; 
 }
+
+/* .sort-options .order-option:hover {
+  background-color: transparent; 
+  color: #242424;
+  box-shadow: none; 
+  transform: none;
+  text-decoration: underline;
+} */
