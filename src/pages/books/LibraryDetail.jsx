@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
@@ -10,7 +10,9 @@ const LibraryDetail = () => {
   const { libCode } = useParams(); // URL에서 libCode 가져오기
   const [libDetail, setLibDetail] = useState([]);  // 도서관 정보 상태 추가
   const [newArrivalBook, setNewArrivalBook] = useState([]); // 도서관 신착 도서 상태 추가
-  
+  const mapRef = useRef(null); // 지도 DOM 참조
+  const isMapInitialized = useRef(false); // 지도 초기화 여부 추적
+  const [map, setMap] = useState(null); // 지도 객체
 
   const itemsPerSlide = 4; // 슬라이더당 표시할 아이템 수
 
@@ -40,17 +42,35 @@ const LibraryDetail = () => {
 
   }, [libCode]);
 
+  // 지도 초기화
+  useEffect(() => {
+    if (isMapInitialized.current || !mapRef.current) return;
+    console.log('지도 초기화 진행');
 
-  if (!libDetail || Object.keys(libDetail).length === 0) {
-    return <p>Loading...</p>;
-  }
+    const newMap = new window.Tmapv2.Map('map_div', {
+      center: new window.Tmapv2.LatLng(libDetail.latitude, libDetail.longitude),
+      width: '100%',
+      height: '500px',
+      zoom: 15,
+    });
+
+    isMapInitialized.current = true;
+    setMap(newMap);
+    
+    // 마커 추가
+    new window.Tmapv2.Marker({
+      position: new window.Tmapv2.LatLng(libDetail.latitude, libDetail.longitude),
+      map: map,
+      title: libDetail.libName,
+    });
+  }, [mapRef]);
 
   return (
     <div className="book-detail-container">
       <div className="book-detail-top">
         <div className="book-image">
           <div className="book-thum">
-            <img src={libDetail.bookImageURL} alt={libDetail.bookname} />
+            <div id="map_div" ref={mapRef}></div>
           </div>
         </div>
         <div className="book-info">
