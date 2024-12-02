@@ -1,0 +1,57 @@
+/* 테이블 스타일 */
+.wishlist-container {
+    width: 1200px;
+    margin: 50px auto;
+}
+
+.wishlist-title {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.wishlist {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+}
+
+.wishlist th, .wishlist td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.wishlist th {
+    background-color: #f1f1f1;
+}
+
+
+.wishlist tr:hover {
+    background-color: #ddd;
+}
+
+.cancel-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.cancel-button:hover {
+    background-color: #d32f2f;
+}
+
+.no-items {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+}
+
+.wish-book-image {
+    width: 60px;
+    height: 90px;
+    object-fit: contain;
+}
