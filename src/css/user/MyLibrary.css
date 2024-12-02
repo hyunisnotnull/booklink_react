@@ -9,11 +9,23 @@
     margin-bottom: 20px;
 }
 
-.wishlist {
-    width: 100%;
+.wishlist-table {
+    width: 1200px;  /* 테이블 너비 고정 */
+    margin: 0 auto;  /* 가운데 정렬 */
     border-collapse: collapse;
     border-radius: 10px;
+    table-layout: auto;
 }
+
+.wishlist-table th, .wishlist-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden; 
+}
+
 
 .wishlist th, .wishlist td {
     padding: 15px;

@@ -75,7 +75,7 @@ const MyLibrary = () => {
           <h1 className="wishlist-title">내 서재</h1>
           {wishList.length > 0 ? (
             <>
-            <table>
+            <table className="wishlist-table">
               <thead>
                 <tr>
                   <th>이미지</th>
@@ -92,7 +92,7 @@ const MyLibrary = () => {
                     <img 
                         src={book.W_BOOKIMAGEURL || "/img/defaultBook.png"} 
                         alt={book.W_NAME} 
-                        className="wish-book-image"  // 스타일을 CSS 클래스에서 관리
+                        className="wish-book-image"
                       />
                     </td>
                     <td>{book.W_NAME}</td>
