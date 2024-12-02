@@ -243,9 +243,9 @@ const Signup = () => {
                 </select>
                 <br />
                 <input type="hidden" id="user_post_address" name="u_post_address" />
-                <div class="address-group">
-                    <input type="text" id="user_zipcode" name="u_zipcode"  value={uZipcode} placeholder="우편번호" readonly required />
-                    <input type="button" class="address-btn" onClick={clickButton} value="우편번호 찾기" /> {openPostcode &&
+                <div className="address-group">
+                    <input type="text" id="user_zipcode" name="u_zipcode"  value={uZipcode} placeholder="우편번호" readOnly required />
+                    <input type="button" className="address-btn" onClick={clickButton} value="우편번호 찾기" /> {openPostcode &&
                         <DaumPostcode
                             style={style}
                             onComplete={selectAddress}  // 값을 선택할 경우 실행되는 이벤트
