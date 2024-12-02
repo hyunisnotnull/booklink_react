@@ -89,11 +89,13 @@ const MyLibrary = () => {
                 {currentBooks.map((book) => (
                   <tr key={book.W_ISBN13}>
                     <td>
-                    <img 
-                        src={book.W_BOOKIMAGEURL || "/img/defaultBook.png"} 
-                        alt={book.W_NAME} 
-                        className="wish-book-image"
-                      />
+                    <a href={`/book/detail/${book.W_ISBN13}`}>
+                      <img 
+                          src={book.W_BOOKIMAGEURL || "/img/defaultBook.png"} 
+                          alt={book.W_NAME} 
+                          className="wish-book-image"
+                          />
+                    </a>
                     </td>
                     <td>{book.W_NAME}</td>
                     <td>{book.W_AUTHORS}</td>
