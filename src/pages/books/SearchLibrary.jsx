@@ -153,7 +153,7 @@ const SearchLibrary = () => {
 
   return (
     <div className="library-search-container">
-      <h1 className="library-search-title">도서관 검색</h1>
+      <h1 className="library-search-title">소장 도서관 검색</h1>
       <div className="library-search-form">
         <label>
           제목&nbsp;:&nbsp;
@@ -206,7 +206,7 @@ const SearchLibrary = () => {
         {/* 검색 결과 제목 */}
         <hr />
         <br />
-        <h2 className="search-results-title">도서관 검색 결과</h2>
+        <h2 className="search-results-title">소장 도서관 검색 결과</h2>
         <hr />
         <div className="search-results-content">
           {/* 검색 결과 리스트 */}
