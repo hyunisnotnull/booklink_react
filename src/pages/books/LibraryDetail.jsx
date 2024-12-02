@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
-import { cleanHTMLText, cleanBookName, extractAuthors, extractTranslator } from '../../js/Textfilter.js';
-import '../../css/books/BookDetail.css';
+import '../../css/books/LibraryDetail.css';
 import '../../css/include/Slide.css';
 
 const LibraryDetail = () => {
@@ -13,6 +12,7 @@ const LibraryDetail = () => {
   const mapRef = useRef(null); // 지도 DOM 참조
   const isMapInitialized = useRef(false); // 지도 초기화 여부 추적
   const [map, setMap] = useState(null); // 지도 객체
+  const [markers, setMarkers] = useState([]); // 마커 배열
 
   const itemsPerSlide = 4; // 슬라이더당 표시할 아이템 수
 
@@ -48,22 +48,46 @@ const LibraryDetail = () => {
     console.log('지도 초기화 진행');
 
     const newMap = new window.Tmapv2.Map('map_div', {
-      center: new window.Tmapv2.LatLng(libDetail.latitude, libDetail.longitude),
+      center: new window.Tmapv2.LatLng(37.5665, 126.978),
       width: '100%',
       height: '500px',
       zoom: 15,
     });
-
-    isMapInitialized.current = true;
-    setMap(newMap);
     
-    // 마커 추가
-    new window.Tmapv2.Marker({
-      position: new window.Tmapv2.LatLng(libDetail.latitude, libDetail.longitude),
+    console.log("지도 초기화 완료");
+    isMapInitialized.current = true; // 초기화 완료 상태로 설정
+    setMap(newMap);
+  }, [mapRef]);
+    
+  // 지도에 마커 추가
+  useEffect(() => {
+    if (!map || !libDetail.latitude || !libDetail.longitude) {
+      console.log("지도 또는 좌표가 초기화되지 않았습니다.");
+      return; // 지도와 좌표가 준비된 경우에만 실행
+    }
+
+    // 기존 마커 제거
+    markers.forEach((marker) => marker.setMap(null));
+    setMarkers([]);
+
+    // 새로운 마커 추가
+    const bounds = new window.Tmapv2.LatLngBounds(); // 지도 경계를 계산할 객체
+    const position = new window.Tmapv2.LatLng(libDetail.latitude, libDetail.longitude);
+    bounds.extend(position); // 위치를 경계에 추가
+
+    const marker = new window.Tmapv2.Marker({
+      position: position,
       map: map,
       title: libDetail.libName,
     });
-  }, [mapRef]);
+
+    setMarkers([marker]); // 새로운 마커를 배열로 저장
+
+    // 지도 경계를 마커에 맞게 조정
+    map.fitBounds(bounds);
+
+    console.log("마커 추가 완료:", marker);
+  }, [map, libDetail]);
 
   return (
     <div className="book-detail-container">
