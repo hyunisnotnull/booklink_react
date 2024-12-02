@@ -1,0 +1,54 @@
+h2 {
+    margin-top: 20px;
+}
+
+#sign_up_modal input {
+padding: 10px;
+margin-top: 10px;
+font-size: 16px;
+border: 1px solid #ccc;
+border-radius: 4px;
+margin-right: 10px;
+background-color: #f9f9f9;
+cursor: pointer;
+transition: border-color 0.3s;
+}
+
+
+.address-group select {
+    margin-top: 10px;
+}
+
+.txt_basic {
+    width: 350px;
+}
+
+input[name='u_phone'] {
+    width: 140px;
+}
+
+#user_zipcode {
+    width: 220px;
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.btn_basic {
+    width: 150px;
+    margin-bottom: 10px;
+}
+
+#sign_up_modal {
+width: 80%;
+margin: 0 auto;
+text-align: center;
+}

@@ -3,12 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { useJwt } from "react-jwt";
 import { useCookies } from 'react-cookie'; // useCookies import
 import '../../css/include/Header.css';
+//import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
   const navigate = useNavigate(); 
   const [cookie, setCookie, removeCookie] =  useCookies();
   const { decodedToken, isExpired } = useJwt(cookie.token);
+ // const decoded = jwtDecode(token);
 
+
+  useEffect(() => {
+
+}, [cookie]);
+      
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -60,8 +67,6 @@ const Header = () => {
         <div className="auth">
 
     
-          <a href='/signin'>로그인</a>
-          <a href='/signup'>회원가입</a>
     
           {!isExpired ?
           <>
@@ -69,7 +74,10 @@ const Header = () => {
           <a href='#none' onClick={signOutClickHandler} >로그아웃</a>
           </>
           :
-          <></>
+          <>
+          <a href='/signin'>로그인</a>
+          <a href='/signup'>회원가입</a>
+          </>
           }
         </div>
       </div>
