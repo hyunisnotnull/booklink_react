@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import { useJwt } from "react-jwt";
 import { useCookies } from 'react-cookie'; // useCookies import

@@ -13,9 +13,7 @@ import SearchBook from './pages/books/SearchBook';
 import SearchLibrary from './pages/books/SearchLibrary';
 import LibraryDetail from './pages/books/LibraryDetail';
 import SearchLibraryByName from './pages/books/SearchLibraryByName';
-
-
-
+import MyLibrary from './pages/user/MyLibrary';
 
 
 const App = () => {
@@ -38,6 +36,7 @@ const App = () => {
           <Route path="/book/detail/:bookID" element={<BookDetail />} />
           <Route path="/book/library_detail/:libCode" element={<LibraryDetail />} />
           <Route path="/library/search_library_name" element={<SearchLibraryByName />} />
+          <Route path="/my_library" element={<MyLibrary />} />
           {/* 다른 페이지를 추가하려면 여기에 Route를 추가 */}
         </Routes>
 
