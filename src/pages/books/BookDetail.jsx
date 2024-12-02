@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
 import { cleanHTMLText, extractAuthors, extractTranslator } from '../../js/Textfilter.js';
 import '../../css/books/BookDetail.css';
 import '../../css/include/Loading.css';
+import { useJwt } from "react-jwt";
+import { useCookies } from 'react-cookie';
 
 const BookDetail = () => {
   const { bookID } = useParams(); // URL에서 bookID 가져오기
   const [bookDetail, setBookDetail] = useState([]);  // 도서 정보 상태 추가
   const [bookRelated, setBookRelated] = useState([]); // 주제 연관 도서 상태 추가
   const [libraries, setLibraries] = useState([]); // 주변 도서 소장 도서관 
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [isFavorited, setIsFavorited] = useState(false);
   const [isRead, setIsRead] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isLibraryLoading, setIsLibraryLoading] = useState(true);
+
+  const [cookie] =  useCookies();
+  const { decodedToken, isExpired } = useJwt(cookie.token);
+
+  const navigate = useNavigate();
 
   // 위치 정보를 저장할 상태
   const [location, setLocation] = useState({
@@ -31,7 +37,20 @@ const BookDetail = () => {
 
         getLocation();
       }
-      console.log('location:::', location);
+      
+      if (decodedToken && !isExpired) {
+        axios.post(`${process.env.REACT_APP_SERVER}/user/wishBooks`, {
+          userId: decodedToken.userId
+        })
+        .then(response => {
+          const wishlist = response.data.wishlistBooks;
+          const isBookFavorited = wishlist.some(book => book.W_ISBN13 === bookID);
+          setIsFavorited(isBookFavorited);
+        })
+        .catch(error => {
+          console.error('찜한 도서 조회 실패:', error);
+        });
+      }
 
       setIsLibraryLoading(true);
       setIsLoading(true);
@@ -49,7 +68,6 @@ const BookDetail = () => {
           .then((response) => {
             const { libraries } = response.data;
             setLibraries(libraries || []); // 대출 가능한 도서관 리스트 설정
-            console.log('도서관쓰', libraries);
           })
           .catch((error) => {
             console.error('Error fetching available libraries:', error);
@@ -81,10 +99,47 @@ const BookDetail = () => {
           setIsLoading(false);
         });
 
-  }, [bookID, location]);
+  }, [bookID, location, decodedToken, isExpired]);
 
+  // 찜하기 , 취소 클릭 핸들러
   const handleFavoriteClick = () => {
-    setIsFavorited(!isFavorited); // 찜하기 상태 토글
+    if (isExpired || !decodedToken) {
+      alert('로그인 후 찜할 수 있습니다.');
+      return navigate('/signin');
+    }
+
+    if (!isFavorited && decodedToken && !isExpired) {  // 로그인 되어 있고 찜하지 않은 경우
+      const wishBookData = {
+        W_U_ID: decodedToken.userId, 
+        W_ISBN13: bookDetail.isbn13,
+        W_AUTHORS: bookDetail.authors, 
+        W_NAME: bookDetail.bookname, 
+        W_PUBLISHER: bookDetail.publisher, 
+        W_BOOKIMAGEURL: bookDetail.bookImageURL, 
+      };
+
+      axios.post(`${process.env.REACT_APP_SERVER}/user/addWishBook`, wishBookData)
+        .then(response => {
+          alert(response.data.message);
+          setIsFavorited(true);
+        })
+        .catch(error => {
+          alert(error.response ? error.response.data.message : '서버 오류 발생. 잠시후 다시 시도해주세요.');
+        });
+
+    } else if (isFavorited && decodedToken) {
+      axios.delete(`${process.env.REACT_APP_SERVER}/user/cancleWishBook`, {
+        data: { W_U_ID: decodedToken.userId, W_ISBN13: bookDetail.isbn13 }
+      })
+      .then(response => {
+        alert(response.data.message);
+        setIsFavorited(false);
+      })
+      .catch(error => {
+        alert(error.response ? error.response.data.message : '서버 오류 발생. 잠시후 다시 시도해주세요.');
+      });
+    }
+
   };
 
   const handleReadClick = () => {
@@ -130,7 +185,7 @@ const BookDetail = () => {
                 >
                   {isFavorited ? '찜 취소' : '찜하기'}
                 </button>
-                {isLoggedIn && (
+                {!isExpired && (
                   <button
                     className={`read-button ${isRead ? 'active' : ''}`}
                     onClick={handleReadClick}
