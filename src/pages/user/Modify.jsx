@@ -5,6 +5,7 @@ import DaumPostcode from 'react-daum-postcode';
 import { useJwt } from "react-jwt";
 import { useCookies } from 'react-cookie'; // useCookies import
 import { jwtDecode } from "jwt-decode";
+import '../../css/user/modify.css';
 
 const Modify = () => {
     
@@ -85,6 +86,7 @@ const Modify = () => {
               setUGender(data.u_SEX);
               setUAge(data.u_AGE);
               setUPhone(data.u_PHONE);
+              setUZipcode(data.u_ZIPCODE);
               setUAddress(data.u_POST_ADDRESS); // //api상의 주소
               setUDetailAddress(data.u_DETAIL_ADDRESS); //상세 주소
 
@@ -156,6 +158,7 @@ const Modify = () => {
         formData.append("u_pw", uPw);
         formData.append("u_sex", uGender);
         formData.append("u_age", uAge);
+        formData.append("u_zipcode", uZipcode);
         formData.append("u_phone", uPhone);
         formData.append("u_post_address", uAddress);
         formData.append("u_detail_address", uDetailAddress);
@@ -268,14 +271,18 @@ const Modify = () => {
          }
      }
 
+
+
+
     const style = {
         background : "rgba(0,0,0,0.25)",
-                                position : "fixed",
-                                left:"25%",
-                                top:"0",
-                                height:"100%",
-                                width:"50%",
-      }
+        position : "fixed",
+        left:"60%",
+        top:"65px",
+        height:"450px",
+        width:"400px",
+        border: "1px solid #ccc",
+}
     return (
         <div id="sign_up_modal">
             <div className="sign_up_modal_content">
@@ -290,7 +297,6 @@ const Modify = () => {
                 <br />
                 <input name="u_phone" className="txt_basic" type="text" value={uPhone} onChange={uPhoneChangeHandler} placeholder="휴대전화번호" />
 
-                <br />
                 <select name="u_sex" className="gen" id="gen" value={uGender} onChange={uGenderChangeHandler}>
                     <option value="">성별</option>
                     <option value="M">남성</option>
@@ -308,17 +314,19 @@ const Modify = () => {
                 <br />
                 <input type="hidden" id="user_post_address" name="u_post_address" />
                 <div class="address-group">
-                    <input type="text" id="user_postcode" name="u_postcode"  value={uZipcode} placeholder="우편번호" readonly required />
+                    <input type="text" id="user_zipcode" name="u_zipcode"  value={uZipcode} placeholder="우편번호" readonly required />
                     <input type="button" class="address-btn" onClick={clickButton} value="우편번호 찾기" /> {openPostcode &&
                         <DaumPostcode
                             style={style}
                             onComplete={selectAddress}  // 값을 선택할 경우 실행되는 이벤트
                             autoClose={false} // 값을 선택할 경우 사용되는 DOM을 제거하여 자동 닫힘 설정
-                            defaultQuery='판교역로 235' // 팝업을 열때 기본적으로 입력되는 검색어
-                            />}
+                            defaultQuery='의정부 센트럴타워' // 팝업을 열때 기본적으로 입력되는 검색어
+                            />
+                }
                 </div>
-                <input type="text" id="user_address" name="u_address"  value={uAddress} placeholder="주소" required />
-                <input type="text" id="user_detailAddress" name="u_detail_address"  value={uDetailAddress} onChange={uDetailAddressHandler} placeholder="상세주소" required />
+                <input className="txt_basic" type="text" id="user_address" name="u_address"  value={uAddress} placeholder="주소" required />
+                <br />
+                <input className="txt_basic" type="text" id="user_detailAddress" name="u_detail_address"  value={uDetailAddress} onChange={uDetailAddressHandler} placeholder="상세주소" required />
                 <br />
                 <br />
                 <button type="submit" className="btn_basic" >수정</button>

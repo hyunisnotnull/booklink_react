@@ -155,14 +155,6 @@ const SearchBook = () => {
     return (
         <div className="book-search-container">
         <h1 className="book-search-title">도서 상세검색</h1>
-            <div className="sort-options">
-                <a href="#" onClick={(e) => { e.preventDefault(); handleOrderChange(); }} className='order-option'>
-                    {setOrder === 'asc' ? '[ 오름차순 ]' : '[ 내림차순 ]'}
-                </a>|
-                <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('isbn'); }} className={sortOption === 'isbn' ? 'active' : ''}>ISBN순</a>|
-                <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('pubYear'); }} className={sortOption === 'pubYear' ? 'active' : ''}>출판년도순</a>|
-                <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('loanCount'); }} className={sortOption === 'loanCount' ? 'active' : ''}>대출건수순</a>
-            </div>
         <hr />
         <div className="book-search-form">
             <label>제목 &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
@@ -217,6 +209,14 @@ const SearchBook = () => {
             <hr />
             <br />
             <h2 className="search-results-title">도서 리스트</h2>
+                <div className="sort-options">
+                    <a href="#" onClick={(e) => { e.preventDefault(); handleOrderChange(); }} className='order-option'>
+                        {setOrder === 'asc' ? '[ 오름차순 ]' : '[ 내림차순 ]'}
+                    </a>|
+                    <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('isbn'); }} className={sortOption === 'isbn' ? 'active' : ''}>ISBN순</a>|
+                    <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('pubYear'); }} className={sortOption === 'pubYear' ? 'active' : ''}>출판년도순</a>|
+                    <a href="#" onClick={(e) => { e.preventDefault(); handleSortChange('loanCount'); }} className={sortOption === 'loanCount' ? 'active' : ''}>대출건수순</a>
+                </div>
             <ul className="search-book-items">
             {books.map((book, index) => (
                 <li key={index} className="search-book-item">

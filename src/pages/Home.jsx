@@ -64,13 +64,12 @@ const Home = () => {
             <>
               {/* 이벤트 섹션 */}
               <div className="event-section">
-                <h4>이벤트</h4>
                 <Slide items={events} itemsPerSlide={1} autoSlide={true} /> 
               </div>
 
               {/* 급상승 도서 섹션 */}
               <div className="book-section">
-                <h4>급상승 도서</h4>
+                <h3 className="hot-book" >급상승 도서</h3>
                 <Slide items={risingBooks} itemsPerSlide={1} autoSlide={true} />
               </div>
             </>
@@ -79,8 +78,8 @@ const Home = () => {
 
         {/* 인기 도서 섹션 */}
         {!isLoading && (
-          <div>
-            <h3>인기 도서</h3>
+          <div className='popular-book-section'>
+            <h2 className='popular-book'>인기 도서</h2>
             <hr className="home-hr" />
             <Slide items={popularBooks} itemsPerSlide={itemsPerSlide} />
           </div>
@@ -88,8 +87,8 @@ const Home = () => {
 
         {/* 신착 도서 섹션 */}
         {!isLoading && (
-          <div>
-            <h3>신착 도서</h3>
+          <div className='new-book-section'>
+            <h2 className='new-book'>신착 도서</h2>
             <hr className="home-hr" />
             <Slide items={newBooks} itemsPerSlide={itemsPerSlide} />
           </div>

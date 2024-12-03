@@ -34,6 +34,13 @@
   margin-top: 20px;
 }
 
+.book-search-form:nth-of-type(1) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+}
+
 .book-search-form label {
   font-size: 1rem;
   margin-right: 10px;
@@ -100,6 +107,7 @@
   color: red;
   font-size: 1rem;
   margin-top: 10px;
+  margin-bottom: 35px;
   text-align: center;
 }
 
@@ -107,41 +115,56 @@
   color: rgb(0, 0, 0);
   font-size: 1rem;
   margin-top: 10px;
+  margin-bottom: 35px;
   text-align: center;
 }
 
-/* 도서 리스트 (1개씩 표시) */
+/* 도서 리스트 */
 .search-book-items {
   list-style-type: none;
   padding: 0;
   margin-top: 20px;
-  text-align: center; /* 도서 항목 가운데 정렬 */
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 60px;
+  row-gap: 30px;
+  text-align: center;
+  border-top: 2px solid rgba(0, 123, 255, 0.5);
+  border-bottom: 2px solid rgba(0, 123, 255, 0.5); 
 }
 
 /* 각 도서 항목 */
 .search-book-item {
   display: flex; /* 이미지와 설명을 나란히 표시 */
   align-items: center;
-  width: 100%;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #ddd; /* 항목 간 구분선 추가 */
+  margin-top: 20px;
   padding-bottom: 20px; /* 구분선과 항목 간 간격 */
 }
 
-.search-book-item:first-child {
+.search-book-item:nth-child(9),
+.search-book-item:last-child {
+  margin-bottom: 20px;
+}
+
+/* .search-book-item:first-child {
+  border-top: 2px solid rgba(0, 123, 255, 0.5);
+  padding-top: 20px;
+}
+
+.search-book-item:nth-child(2) {
   border-top: 2px solid rgba(0, 123, 255, 0.5);
   padding-top: 20px;
 }
 
 .search-book-item:last-child {
-  border-bottom: 2px solid #ddd; 
-}
+  border-bottom: 2px solid rgba(0, 123, 255, 0.5); 
+} */
 
 /* 구분선의 스타일 */
-.search-book-item {
-  border-color: rgba(0, 123, 255, 0.5); /* 구분선 색상 (파란색으로 변경 가능) */
-  transition: all 0.3s ease; /* 부드러운 전환 효과 */
-}
+/* .search-book-item {
+  border-color: rgba(0, 123, 255, 0.5);
+  transition: all 0.3s ease; 
+} */
 
 /* 도서 이미지 */
 .search-book-image {
@@ -174,6 +197,10 @@
 .search-book-isbn {
   margin: 5px 0;
   font-size: 0.9rem;
+}
+
+.search-book-isbn{
+  margin: 7px 0;
 }
 
 /* 상세정보 링크 */
@@ -225,20 +252,20 @@ box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
 }
 
 /* 정렬 기준 링크의 클릭 방지 상태 (비활성화된 링크) */
-/* .sort-options a:disabled {
+.sort-options a:disabled {
 color: #ccc;
 cursor: not-allowed;
 background-color: #f0f0f0;
-} */
+}
 
 .sort-options .order-option {
   font-weight: bold; 
 }
 
-/* .sort-options .order-option:hover {
+.sort-options .order-option:hover {
   background-color: transparent; 
   color: #242424;
   box-shadow: none; 
   transform: none;
   text-decoration: underline;
-} */
+}

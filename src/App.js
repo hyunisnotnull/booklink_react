@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Signin from './pages/user/Signin';
 import Signup from './pages/user/Signup';
 import Modify from './pages/user/Modify';
+import Google from './pages/user/Google';
 import BookDetail from './pages/books/BookDetail';
 import SearchBook from './pages/books/SearchBook';
 import SearchLibrary from './pages/books/SearchLibrary';
@@ -29,6 +30,7 @@ const App = () => {
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/Modify" element={<Modify />} />
+          <Route path="/Google" element={<Google />} />
           <Route path="/search_book" element={<SearchBook />} />
           <Route path="/book/search_library" element={<SearchLibrary />} />
           <Route path="/book/detail/:bookID" element={<BookDetail />} />
