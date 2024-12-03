@@ -34,19 +34,25 @@ const LibraryDetail = () => {
   const itemsPerSlide = 4; // 슬라이더당 표시할 아이템 수
 
   useEffect(() => {
-    // if (decodedToken && !isExpired) {
-    //   axios.post(`${process.env.REACT_APP_SERVER}/user/wishLibrarys`, {
-    //     userId: decodedToken.userId
-    //   })
-    //   .then(response => {
-    //     const wishLibrarylist = response.data.wishlistLibs;
-    //     const isLibraryFavorited = wishLibrarylist.some(lib => lib.ML_L_CODE === libCode);
-    //     setIsLibraryFavorited(isLibraryFavorited);
-    //   })
-    //   .catch(error => {
-    //     console.error('찜한 도서관 조회 실패:', error);
-    //   });
-    // }
+
+    if (decodedToken && !isExpired) {
+      axios.post(`${process.env.REACT_APP_SERVER}/user/wishLibrarys`, {
+        userId: decodedToken.userId
+      })
+      .then(response => {
+        const wishLibrarylist = response.data.wishlistLibs;
+        console.log('HI', wishLibrarylist);
+        const isLibraryFavorited = wishLibrarylist.some(lib => String(lib.l_CODE) === String(libCode));
+        console.log('libCode:', libCode);
+        setIsLibraryFavorited(isLibraryFavorited);
+        wishLibrarylist.forEach(lib => {
+          console.log('찜한 도서관 L_CODE:', lib.l_CODE);
+        });
+      })
+      .catch(error => {
+        console.error('찜한 도서관 조회 실패:', error);
+      });
+    }
 
     // 도서관 정보 가져오기
     axios
@@ -71,7 +77,7 @@ const LibraryDetail = () => {
         console.error('Error fetching library details:', error);
       });
 
-  }, [libCode]);
+  }, [libCode, decodedToken, isExpired]);
 
   // 지도 초기화
   useEffect(() => {
