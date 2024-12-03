@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useCookies } from 'react-cookie'; // useCookies import
 import { useNavigate } from "react-router-dom";
 import '../../css/user/signin.css';
+import { useJwt } from "react-jwt";
+
 
 const Signin = () => {
   // const [uLoginId, setULoginId] = useState('');
@@ -10,8 +12,6 @@ const Signin = () => {
   const [uPw, setUPw] = useState('');
   const [cookie, setCookie] =  useCookies();
   const navigate = useNavigate(); 
-
-  
 
   const uIdChangeHandler = (e) => {
     setUId(e.target.value);
@@ -55,6 +55,7 @@ client_id=${process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID}
 &scope=email profile`;
 };
 
+
   return (
     <>
     <div id="sign_in_modal">
@@ -65,7 +66,7 @@ client_id=${process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID}
       <input name="u_pw" className="txt_basic" type="password" value={uPw} onChange={uPwChangeHandler} placeholder="비밀번호를 입력하세요" />
       <br />
       <button type="submit" className="btn_basic" >로그인</button>
-    <button className="btn_basic" onClick={googleLogin} >Google</button>
+      <button className="btn_basic" onClick={googleLogin} >Google</button>
     </form>
     </div>
     </>

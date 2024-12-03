@@ -13,9 +13,9 @@ const MyLibrary = () => {
   const [itemsPerPage] = useState(5);   
 
   const [cookie] =  useCookies();
-  const { decodedToken, isExpired } = useJwt(cookie.token);
-  const parseJWT = jwtDecode(cookie.token);
+  const { isExpired, decodedToken } = useJwt(cookie.token);
 
+  const parseJWT = jwtDecode(cookie.token);
   const navigate = useNavigate();
 
   // useEffect
