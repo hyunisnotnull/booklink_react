@@ -42,20 +42,6 @@
     background-color: #ddd;
 }
 
-.cancel-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.cancel-button:hover {
-    background-color: #d32f2f;
-}
-
 .no-items {
     text-align: center;
     padding: 20px;
@@ -66,4 +52,38 @@
     width: 60px;
     height: 90px;
     object-fit: contain;
+}
+
+/* 버튼 디자인 */
+.read-button, .cancel-button {
+    background-color: transparent; 
+    border: none;                   
+    cursor: pointer;                
+    font-size: 1.5rem;              
+    padding: 8px;                  
+    transition: transform 0.3s, color 0.3s;
+}
+
+/* 독서 상태 버튼 (책 아이콘) */
+.read-button {
+    color: #555; 
+    font-size: 1.8rem;
+}
+
+/* 독서 상태 버튼 호버 */
+.read-button:hover {
+    color: #4caf50;  
+    transform: scale(1.2); 
+}
+
+/* 찜 취소 버튼 (하트 아이콘) */
+.cancel-button {
+    color: #f44336;  
+    font-size: 1.8rem;
+}
+
+/* 찜 취소 버튼 호버 */
+.cancel-button:hover {
+    color: #d32f2f;  
+    transform: scale(1.2);  
 }
