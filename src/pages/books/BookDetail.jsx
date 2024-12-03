@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { FaHeart, FaRegHeart, FaBook, FaBookOpen } from 'react-icons/fa';
 import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
 import { cleanHTMLText, extractAuthors, extractTranslator } from '../../js/Textfilter.js';
@@ -46,6 +47,9 @@ const BookDetail = () => {
           const wishlist = response.data.wishlistBooks;
           const isBookFavorited = wishlist.some(book => book.W_ISBN13 === bookID);
           setIsFavorited(isBookFavorited);
+
+          const readStatus = wishlist.some(book => book.W_ISBN13 === bookID && book.W_B_READ === 1);
+          setIsRead(readStatus);
         })
         .catch(error => {
           console.error('찜한 도서 조회 실패:', error);
@@ -142,10 +146,6 @@ const BookDetail = () => {
 
   };
 
-  const handleReadClick = () => {
-    setIsRead(!isRead); // 읽음 상태 토글
-  };
-
   // 위치 정보 함수
   const getLocation = () => {
     if (navigator.geolocation) {
@@ -183,15 +183,12 @@ const BookDetail = () => {
                   className={`favorite-button ${isFavorited ? 'active' : ''}`}
                   onClick={handleFavoriteClick}
                 >
-                  {isFavorited ? '찜 취소' : '찜하기'}
+                  {isFavorited ? <FaHeart /> : <FaRegHeart />}
                 </button>
                 {!isExpired && (
-                  <button
-                    className={`read-button ${isRead ? 'active' : ''}`}
-                    onClick={handleReadClick}
-                  >
-                    {isRead ? '읽음 취소' : '읽음 표시'}
-                  </button>
+                  <div className="read-status">
+                    {isRead ? <FaBookOpen /> : <FaBook />}
+                  </div>
                 )}
               </div>
             </div>

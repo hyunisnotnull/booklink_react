@@ -41,7 +41,7 @@
 }
 
 /* 버튼 액션 영역 */
-.book-actions {
+/* .book-actions {
     display: flex;
     gap: 10px;
 }
@@ -74,7 +74,7 @@
 .read-button.active:hover {
     background-color: #ffb3b3;
     border-color: #ff5252;
-}
+} */
 
 /* 기본 정보 스타일 */
 .book-info {

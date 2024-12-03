@@ -14,7 +14,7 @@ const Header = () => {
 
   useEffect(() => {
 
-}, [isExpired, cookie]);
+  }, [isExpired, cookie.token]);
       
 
   const handleSearchSubmit = (e) => {
