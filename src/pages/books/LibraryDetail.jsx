@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
 import '../../css/books/LibraryDetail.css';
 import '../../css/include/Slide.css';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useJwt } from "react-jwt";
+import { useCookies } from 'react-cookie';
 
 const LibraryDetail = () => {
   const { libCode } = useParams(); // URL에서 libCode 가져오기
@@ -21,9 +24,30 @@ const LibraryDetail = () => {
   const [routeInfo, setRouteInfo] = useState({ distance: null, time: null }); // 경로 정보 상태 추가
   const [travelMode, setTravelMode] = useState('pedestrian');
 
+  // 도서관 찜 하기
+  const [isLibraryFavorited, setIsLibraryFavorited] = useState(false);
+  const [cookie] =  useCookies();
+  const { decodedToken, isExpired } = useJwt(cookie.token);
+
+  const navigate = useNavigate();
+
   const itemsPerSlide = 4; // 슬라이더당 표시할 아이템 수
 
   useEffect(() => {
+    // if (decodedToken && !isExpired) {
+    //   axios.post(`${process.env.REACT_APP_SERVER}/user/wishLibrarys`, {
+    //     userId: decodedToken.userId
+    //   })
+    //   .then(response => {
+    //     const wishLibrarylist = response.data.wishlistLibs;
+    //     const isLibraryFavorited = wishLibrarylist.some(lib => lib.ML_L_CODE === libCode);
+    //     setIsLibraryFavorited(isLibraryFavorited);
+    //   })
+    //   .catch(error => {
+    //     console.error('찜한 도서관 조회 실패:', error);
+    //   });
+    // }
+
     // 도서관 정보 가져오기
     axios
       .get(`${process.env.REACT_APP_SERVER}/book/library_detail/${libCode}`)
@@ -297,12 +321,59 @@ const LibraryDetail = () => {
     }
   };
 
+  // 도서관 찜하기 버튼 클릭 핸들러
+  const handleFavoriteClick = () => {
+    if (isExpired || !decodedToken) {
+      alert('로그인 후 찜할 수 있습니다.');
+      return navigate('/signin');
+    }
+
+    if (!isLibraryFavorited && decodedToken && !isExpired) {  // 로그인 되어 있고 찜하지 않은 경우
+      const favoriteLibraryData = {
+        ML_U_ID: decodedToken.userId, 
+        ML_L_CODE: libDetail.libCode,
+        // ML_L_NAME : libDetail.libName,
+        // ML_L_ADDRESS: libDetail.address,
+      };
+
+      axios.post(`${process.env.REACT_APP_SERVER}/user/addWishLib`, favoriteLibraryData)
+        .then(response => {
+          alert(response.data.message);
+          setIsLibraryFavorited(true);
+        })
+        .catch(error => {
+          alert(error.response ? error.response.data.message : '서버 오류 발생. 잠시후 다시 시도해주세요.');
+        });
+
+    } else if (isLibraryFavorited && decodedToken) {
+      axios.delete(`${process.env.REACT_APP_SERVER}/user/cancleWishLib`, {
+        data: { ML_U_ID: decodedToken.userId, ML_L_CODE: libDetail.libCode }
+      })
+      .then(response => {
+        alert(response.data.message);
+        setIsLibraryFavorited(false);
+      })
+      .catch(error => {
+        alert(error.response ? error.response.data.message : '서버 오류 발생. 잠시후 다시 시도해주세요.');
+      });
+    }
+
+  };
+
   return (
     <div className="info-page-container">
       <div className="info-page-top">
         <div className="info-map">
           <div className="info-map-container">
             <div id="map_div" ref={mapRef}></div>
+          </div>
+          <div className="book-actions">
+            <button
+              className={`favorite-button ${isLibraryFavorited ? 'active' : ''}`}
+              onClick={handleFavoriteClick}
+            >
+              {isLibraryFavorited ? <FaHeart /> : <FaRegHeart />}
+            </button>
           </div>
         </div>
         <div className="library-info">
