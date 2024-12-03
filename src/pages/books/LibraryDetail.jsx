@@ -8,16 +8,18 @@ import '../../css/include/Slide.css';
 const LibraryDetail = () => {
   const { libCode } = useParams(); // URL에서 libCode 가져오기
   const [libDetail, setLibDetail] = useState([]);  // 도서관 정보 상태 추가
-  const [newArrivalBook, setNewArrivalBook] = useState([]); // 도서관 신착 도서 상태 추가
+  const [newBooks, setNewBooks] = useState([]); // 도서관 신착 도서 상태 추가
   const mapRef = useRef(null); // 지도 DOM 참조
   const isMapInitialized = useRef(false); // 지도 초기화 여부 추적
   const [map, setMap] = useState(null); // 지도 객체
   const [markers, setMarkers] = useState([]); // 마커 배열
   const [startMarker, setStartMarker] = useState(null); // 출발지 마커 상태 추가
   const [startAddress, setStartAddress] = useState(''); // 출발지 입력 상태
+  const [searchResults, setSearchResults] = useState([]); // 실시간 검색 결과 상태
   const [startCoordinates, setStartCoordinates] = useState(null); // 출발지 좌표
   const [routeLine, setRouteLine] = useState(null); // 경로 라인 상태
   const [routeInfo, setRouteInfo] = useState({ distance: null, time: null }); // 경로 정보 상태 추가
+  const [travelMode, setTravelMode] = useState('pedestrian');
 
   const itemsPerSlide = 4; // 슬라이더당 표시할 아이템 수
 
@@ -37,12 +39,12 @@ const LibraryDetail = () => {
         }
         console.log('222',libDetail);
 
-        setNewArrivalBook(newArrivalBook ? newArrivalBook.map(item => item.doc) : []);
+        setNewBooks(newArrivalBook ? newArrivalBook.map(item => item.doc) : []);
 
         console.log('3',newArrivalBook);
       })
       .catch((error) => {
-        console.error('Error fetching libs details:', error);
+        console.error('Error fetching library details:', error);
       });
 
   }, [libCode]);
@@ -78,84 +80,119 @@ const LibraryDetail = () => {
 
     // 새로운 마커 추가
     const position = new window.Tmapv2.LatLng(libDetail.latitude, libDetail.longitude);
-
     const marker = new window.Tmapv2.Marker({
       position: position,
       map: map,
       title: libDetail.libName,
     });
-
     setMarkers([marker]); // 새로운 마커를 배열로 저장
 
     // 지도 중심과 줌 설정
     map.setCenter(position);
-    map.setZoom(17);
+    map.setZoom(18);
 
-    console.log("마커 추가 완료:", marker);
   }, [map, libDetail.latitude, libDetail.longitude]);
 
-  const handleGeocodeStartAddress = async () => {
-    if (!startAddress) {
-      console.error("출발지 주소를 입력하세요.");
+  // 실시간 검색 API 호출
+  const handleSearchInput = async (e) => {
+    const input = e.target.value.trim();
+    setStartAddress(input);
+
+    if (!input) {
+      setSearchResults([]);
       return;
     }
-  
+
     try {
       const headers = { appKey: process.env.REACT_APP_TMAP_API };
-  
-      const response = await axios.get(
-        `https://apis.openapi.sk.com/tmap/pois?version=1&format=json`,
-        {
-          params: {
-            searchKeyword: startAddress,
-            resCoordType: "WGS84GEO",
-            reqCoordType: "WGS84GEO",
-            count: 1, // 가장 첫 번째 결과만 사용
-          },
-          headers,
-        }
-      );
-  
-      const pois = response.data.searchPoiInfo.pois.poi;
-      if (pois.length > 0) {
-        const { noorLat, noorLon, name } = pois[0];
-        const lat = parseFloat(noorLat);
-        const lon = parseFloat(noorLon);
-  
-        setStartCoordinates({ lat, lng: lon });
-        console.log(`출발지 설정 완료: ${name} (${lat}, ${lon})`);
+      const response = await axios.get('https://apis.openapi.sk.com/tmap/pois?version=1&format=json', {
+        params: {
+          searchKeyword: input,
+          resCoordType: 'WGS84GEO',
+          reqCoordType: 'WGS84GEO',
+          count: 10,
+        },
+        headers,
+      });
 
-        // 이전 마커 제거
-        if (startMarker) {
-          startMarker.setMap(null);
-        }
-  
-        // 출발지 마커 추가
-        const marker = new window.Tmapv2.Marker({
-          position: new window.Tmapv2.LatLng(lat, lon),
-          map,
-          title: name,
-        });
-        setStartMarker(marker);
-      } else {
-        console.error("검색 결과가 없습니다. 정확한 주소를 입력하세요.");
-      }
+      const pois = response.data.searchPoiInfo.pois.poi;
+      setSearchResults(pois.map(poi => ({
+        name: poi.name,
+        address: poi.upperAddrName + ' ' + poi.middleAddrName + ' ' + poi.lowerAddrName,
+        lat: parseFloat(poi.noorLat),
+        lng: parseFloat(poi.noorLon),
+      })));
     } catch (error) {
-      console.error("주소를 검색하는 동안 오류 발생:", error);
+      console.error('Error during search:', error);
     }
   };
 
-  const handleSearchRoute = async () => {
+  // 검색 결과 선택 처리
+  const handleSelectSearchResult = (result) => {
+    setStartCoordinates({ lat: result.lat, lng: result.lng });
+    setStartAddress(result.name);
+    setSearchResults([]);
+
+    if (startMarker) startMarker.setMap(null);
+    const marker = new window.Tmapv2.Marker({
+      position: new window.Tmapv2.LatLng(result.lat, result.lng),
+      map,
+      title: result.name,
+    });
+    setStartMarker(marker);
+    map.setCenter(new window.Tmapv2.LatLng(result.lat, result.lng));
+  };
+
+  // 탭 선택
+  const handleSearchRoute = () => {
+    if (travelMode === 'pedestrian') {
+      handleSearchPedestrianRoute();
+    } else if (travelMode === 'car') {
+      handleSearchCarRoute();
+    }
+  };
+
+  // 보행자
+  const handleSearchPedestrianRoute = async () => {
     if (!map || !startCoordinates || !libDetail.latitude || !libDetail.longitude) {
-      console.error('지도, 출발지 또는 도착지가 설정되지 않았습니다.');
+      console.error('보행자 지도, 출발지 또는 도착지가 설정되지 않았습니다.');
       return;
     }
-    console.log("startCoordinates:", startCoordinates);
-    console.log("libDetail.latitude:", libDetail.latitude, "libDetail.longitude:", libDetail.longitude);
 
-    // 기존 경로 초기화
-    if (routeLine) {
-      routeLine.setMap(null);
+    const headers = { appKey: process.env.REACT_APP_TMAP_API };
+    const data = {
+      startX: parseFloat(startCoordinates.lng),
+      startY: parseFloat(startCoordinates.lat),
+      endX: parseFloat(libDetail.longitude),
+      endY: parseFloat(libDetail.latitude),
+      reqCoordType: 'WGS84GEO',
+      resCoordType: 'EPSG3857',
+      startName: '출발지',
+      endName: libDetail.libName,
+    };
+
+    console.log('보행자 경로 요청 데이터:', data);
+
+    try {
+      const response = await axios.post(
+        'https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json',
+        data,
+        { headers }
+      );
+
+      console.log('API 응답 데이터:', response.data);
+
+      drawRoute(response.data.features);
+    } catch (error) {
+      console.error('Error fetching pedestrian route:', error);
+    }
+  };
+
+  // 자동차
+  const handleSearchCarRoute = async () => {
+    if (!map || !startCoordinates || !libDetail.latitude || !libDetail.longitude) {
+      console.error('자동차 지도, 출발지 또는 도착지가 설정되지 않았습니다.');
+      return;
     }
 
     const headers = { appKey: process.env.REACT_APP_TMAP_API };
@@ -166,71 +203,109 @@ const LibraryDetail = () => {
       endY: libDetail.latitude,
       reqCoordType: 'WGS84GEO',
       resCoordType: 'EPSG3857',
-      startName: '출발지',
-      endName: libDetail.libName,
+      searchOption: '0', // 기본 교통 옵션
     };
 
     try {
       const response = await axios.post(
-        'https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json',
+        'https://apis.openapi.sk.com/tmap/routes?version=1&format=json',
         data,
         { headers }
       );
-
-      const resultData = response.data.features;
-      const drawInfoArr = [];
-      console.log("API 응답 데이터:", resultData);
-
-      resultData.forEach((item) => {
-        if (item.geometry.type === 'LineString') {
-          item.geometry.coordinates.forEach(([lng, lat]) => {
-            const convertPoint = new window.Tmapv2.Projection.convertEPSG3857ToWGS84GEO(
-              new window.Tmapv2.Point(lng, lat)
-            );
-            drawInfoArr.push(new window.Tmapv2.LatLng(convertPoint._lat, convertPoint._lng));
-          });
-        }
-      });
-
-      // 경로 그리기
-      if (drawInfoArr.length > 0) {
-        const polyline = new window.Tmapv2.Polyline({
-          path: drawInfoArr,
-          strokeColor: '#DD0000',
-          strokeWeight: 6,
-          map: map,
-        });
-
-        setRouteLine(polyline);
-
-        const bounds = new window.Tmapv2.LatLngBounds();
-        drawInfoArr.forEach((point) => bounds.extend(point));
-        map.fitBounds(bounds);
-      }
-
-      // 총 거리와 시간 계산
-      const totalDistance = resultData[0].properties.totalDistance;
-      const totalTime = resultData[0].properties.totalTime;
-
-      setRouteInfo({
-        distance: (totalDistance / 1000).toFixed(2) + ' km',
-        time: Math.ceil(totalTime / 60) + ' 분',
-      });
+      console.log('99999', response.data.features);
+      drawRoute(response.data.features);
 
     } catch (error) {
-      console.error('경로 탐색 중 오류 발생:', error);
+      console.error('Error fetching car route:', error);
+    }
+  };
+
+  // 경로 그리기
+  const drawRoute = (features) => {
+    const drawInfoArr = [];
+    let totalDistance = 0; // 총 거리
+    let totalTime = 0; // 총 시간
+    let totalFare = 0; // 총 요금 (자동차 전용)
+    let taxiFare = 0; // 택시 요금 (자동차 전용)
+
+    features.forEach((item) => {
+      if (item.geometry.type === 'LineString') {
+        item.geometry.coordinates.forEach(([lng, lat]) => {
+          const convertPoint = new window.Tmapv2.Projection.convertEPSG3857ToWGS84GEO(
+            new window.Tmapv2.Point(lng, lat)
+          );
+          drawInfoArr.push(new window.Tmapv2.LatLng(convertPoint._lat, convertPoint._lng));
+        });
+      } else if (item.properties) {
+        // 경로 정보를 추출
+        totalDistance = item.properties.totalDistance || totalDistance;
+        totalTime = item.properties.totalTime || totalTime;
+        if (travelMode === 'car') { 
+          totalFare = item.properties.totalFare || totalFare; // 자동차 요금 정보 추가
+          taxiFare = item.properties.taxiFare || taxiFare; // 택시 요금 정보 추가
+        }
+      }
+    });
+
+    if (drawInfoArr.length > 0) {
+      if (routeLine && typeof routeLine.setMap === 'function') {
+        routeLine.setMap(null); // 기존 경로 삭제
+      }
+
+      const polyline = new window.Tmapv2.Polyline({
+        path: drawInfoArr,
+        strokeColor: '#DD0000',
+        strokeWeight: 6,
+        map,
+      });
+      setRouteLine(polyline);
+
+      // 지도 정렬
+      const bounds = new window.Tmapv2.LatLngBounds();
+      if (startCoordinates) {
+        bounds.extend(new window.Tmapv2.LatLng(startCoordinates.lat, startCoordinates.lng));
+      }
+      if (libDetail.latitude && libDetail.longitude) {
+        bounds.extend(new window.Tmapv2.LatLng(libDetail.latitude, libDetail.longitude));
+      }
+
+      // 경계 확장 (여유 공간 추가)
+      const ne = bounds.getNorthEast(); // 북동쪽 좌표
+      const sw = bounds.getSouthWest(); // 남서쪽 좌표
+      const expandFactor = 0.15; // 여유 공간 비율 (15%)
+      const latDiff = (ne._lat - sw._lat) * expandFactor;
+      const lngDiff = (ne._lng - sw._lng) * expandFactor;
+
+      const expandedBounds = new window.Tmapv2.LatLngBounds(
+        new window.Tmapv2.LatLng(sw._lat - latDiff, sw._lng - lngDiff),
+        new window.Tmapv2.LatLng(ne._lat + latDiff, ne._lng + lngDiff)
+      );
+
+      map.fitBounds(expandedBounds);
+
+      // 경로 정보 업데이트
+      setRouteInfo({ 
+        distance: (totalDistance / 1000).toFixed(2) + ' km',
+        time: Math.ceil(totalTime / 60) + ' 분',
+        ...(travelMode === 'car' && {
+          fare: totalFare ? totalFare.toLocaleString() + ' 원' : null,
+          taxiFare: taxiFare ? taxiFare.toLocaleString() + ' 원' : null,
+        }),
+      });
+    } else {
+      console.error('경로 데이터가 유효하지 않습니다.');
     }
   };
 
   return (
-    <div className="book-detail-container">
-      <div className="book-detail-top">
-        <div className="book-image">
-          <div className="book-thum">
+    <div className="info-page-container">
+      <div className="info-page-top">
+        <div className="info-map">
+          <div className="info-map-container">
             <div id="map_div" ref={mapRef}></div>
           </div>
         </div>
-        <div className="book-info">
+        <div className="library-info">
           <h1>{libDetail.libName}</h1>
           <br />
           <p><strong>주소:</strong> {libDetail.address}</p>
@@ -238,34 +313,61 @@ const LibraryDetail = () => {
           <p><strong>홈페이지 URL:</strong> {libDetail.homepage}</p>
           <p><strong>휴관일:</strong> {libDetail.closed}</p>
           <p><strong>운영시간:</strong> {libDetail.operatingTime}</p>
-          <hr />
           <p><strong>소장한 도서의 권수:</strong> {libDetail.BookCount}권</p>
         </div>
       </div>
-      <hr />
-      <div className="book-description-wrap">
-        <div className="book-description">
-          <h2>길찾기</h2>
-          <input
-            type="text"
-            placeholder="출발지 주소를 입력하세요"
-            value={startAddress}
-            onChange={(e) => setStartAddress(e.target.value)}
-          />
-          <button onClick={handleGeocodeStartAddress}>출발지 설정</button>
-          <button onClick={handleSearchRoute}>경로 검색</button>
-          {routeInfo.distance && routeInfo.time && (
-            <p>
-              <strong>총 거리:</strong> {routeInfo.distance} | <strong>총 시간:</strong> {routeInfo.time}
-            </p>
+
+      <hr className="info-page-divider" />
+
+      <div className="find-path-wrap">
+        <br />
+        <h2>길찾기</h2>
+        <div className="find-path">
+          <div className='find-path-menu'>
+            <button
+              className={`route-tab ${travelMode === 'pedestrian' ? 'active' : ''}`}
+              onClick={() => setTravelMode('pedestrian')}
+            >
+              도보
+            </button>
+            <button
+              className={`route-tab ${travelMode === 'car' ? 'active' : ''}`}
+              onClick={() => setTravelMode('car')}
+            >
+              자동차
+            </button>
+          </div>
+          <div className="route-selector">
+            <input
+              type="text"
+              className="route-input"
+              placeholder="출발지 입력"
+              value={startAddress}
+              onChange={handleSearchInput}
+            />
+            <br />
+            <button className="route-button" onClick={handleSearchRoute}>
+              길찾기
+            </button>
+          </div>
+
+          {searchResults && searchResults.length > 0 && (
+            <ul className="search-results">
+              {searchResults.map((result, index) => (
+                <li key={index} onClick={() => handleSelectSearchResult(result)}>
+                  <strong>{result.name}</strong>
+                  <p>{result.address}</p>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </div>
-      <hr />
-      <div className="book-related">
+      <hr className="info-page-divider" />
+
+      <div className="new-books-section">
         <h2>신착 도서</h2>
-        <br />
-        <Slide items={newArrivalBook} itemsPerSlide={itemsPerSlide} />
+        <Slide items={newBooks} itemsPerSlide={itemsPerSlide} />
       </div>
     </div>
   );
