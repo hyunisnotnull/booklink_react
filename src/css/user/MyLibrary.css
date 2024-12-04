@@ -87,3 +87,79 @@
     color: #d32f2f;  
     transform: scale(1.2);  
 }
+
+/* 신착 도서 아이콘을 버튼 크기와 동일하게 맞추기 */
+.new-books-icon {
+    font-size: 1.8rem;          
+    color: #4caf50;              
+    transition: transform 0.3s, color 0.3s;
+}
+
+/* 신착 도서 아이콘 호버 */
+.new-books-icon:hover {
+    transform: scale(1.2);       
+    color: #388e3c;             
+}
+
+/* 신착 도서가 없는 경우 아이콘 색상 */
+.new-books-icon-no {
+    font-size: 1.8rem;          
+    color: #f44336;              
+    transition: transform 0.3s, color 0.3s;
+}
+
+/* 신착 도서가 없는 아이콘 호버 */
+.new-books-icon-no:hover {
+    transform: scale(1.2);      
+    color: #d32f2f;   
+}
+
+/* 탭 버튼 스타일 */
+.tab-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 30px;
+}
+
+/* 개별 탭 버튼 */
+.tab-button {
+    background-color: #333; 
+    border: 1px solid #555; 
+    color: #fff;             
+    padding: 8px 15px;       
+    font-size: 1rem;         
+    border-radius: 8px;      
+    margin: 0 10px;         
+    cursor: pointer;        
+    transition: all 0.3s ease; 
+    font-weight: 600;       
+}
+
+/* 활성화된 탭 버튼 */
+.tab-button.active {
+    background-color: #000;  
+    color: #fff;             
+    transform: scale(1.1);   
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
+}
+
+/* 비활성화된 탭 버튼 */
+.tab-button:not(.active):hover {
+    background-color: #444; 
+    color: #ddd;             
+}
+
+/* 탭 버튼 내용 변경 애니메이션 */
+.tab-buttons .tab-button {
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tab-buttons .tab-button:hover {
+    opacity: 1;
+    transform: scale(1.05); 
+}
+
+.MyLib-hr {
+    margin-bottom: 20px;
+}

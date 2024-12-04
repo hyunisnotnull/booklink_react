@@ -59,6 +59,24 @@ const BookDetail = () => {
       setIsLibraryLoading(true);
       setIsLoading(true);
 
+      // 도서 상세 정보 가져오기
+      axios
+        .get(`${process.env.REACT_APP_SERVER}/book/detail/${bookID}`)
+        .then((response) => {
+          const { bookDetail, bookRelated } = response.data;
+          if (bookDetail && bookDetail.detail.length > 0) {
+            setBookDetail(bookDetail.detail[0].book);
+          }
+
+          setBookRelated(bookRelated ? bookRelated.map(item => item.book) : []);
+        })
+        .catch((error) => {
+          console.error('Error fetching book details:', error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+
       // 대출 가능한 도서관 정보 가져오기
       if (location.latitude !== null && location.longitude !== null) {
         axios
@@ -84,24 +102,6 @@ const BookDetail = () => {
         setLibraries([]);
         setIsLibraryLoading(false);
       }
-
-      // 도서 상세 정보 가져오기
-      axios
-        .get(`${process.env.REACT_APP_SERVER}/book/detail/${bookID}`)
-        .then((response) => {
-          const { bookDetail, bookRelated } = response.data;
-          if (bookDetail && bookDetail.detail.length > 0) {
-            setBookDetail(bookDetail.detail[0].book);
-          }
-
-          setBookRelated(bookRelated ? bookRelated.map(item => item.book) : []);
-        })
-        .catch((error) => {
-          console.error('Error fetching book details:', error);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
 
   }, [bookID, location, decodedToken, isExpired]);
 
