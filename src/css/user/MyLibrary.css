@@ -163,3 +163,23 @@
 .MyLib-hr {
     margin-bottom: 20px;
 }
+
+/* 대출 가능 도서관 드롭다운 스타일 */
+.wishlist-table select.loan-select {
+    width: 250px; 
+    padding: 8px;  
+    background-color: #fff; 
+    border: 1px solid #ddd; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+/* 드롭다운 옵션의 너비를 select와 동일하게 고정 */
+.wishlist-table select.loan-select option {
+    width: 200px; /* 옵션 너비 고정 */
+    white-space: nowrap;
+    overflow: hidden; /* 텍스트 넘침을 숨기기 */
+    text-overflow: ellipsis;
+}
