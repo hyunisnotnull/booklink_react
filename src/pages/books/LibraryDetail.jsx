@@ -4,7 +4,7 @@ import axios from 'axios';
 import Slide from '../../comp/Slide.jsx';
 import '../../css/books/LibraryDetail.css';
 import '../../css/include/Slide.css';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaHeart, FaRegHeart, FaWalking, FaCar } from 'react-icons/fa';
 import { useJwt } from "react-jwt";
 import { useCookies } from 'react-cookie';
 
@@ -23,6 +23,7 @@ const LibraryDetail = () => {
   const [routeLine, setRouteLine] = useState(null); // 경로 라인 상태
   const [routeInfo, setRouteInfo] = useState({ distance: null, time: null }); // 경로 정보 상태 추가
   const [travelMode, setTravelMode] = useState('pedestrian');
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 추가
 
   // 도서관 찜 하기
   const [isLibraryFavorited, setIsLibraryFavorited] = useState(false);
@@ -59,19 +60,12 @@ const LibraryDetail = () => {
       .get(`${process.env.REACT_APP_SERVER}/book/library_detail/${libCode}`)
       .then((response) => {
         const { libDetail, newArrivalBook } = response.data;
-        console.log('1',libDetail.libs.length);
-
-        console.log('2',newArrivalBook);
 
         if (libDetail && libDetail.libs.length > 0) {
-          console.log('hi');
           setLibDetail(libDetail.libs[0].lib);
         }
-        console.log('222',libDetail);
 
         setNewBooks(newArrivalBook ? newArrivalBook.map(item => item.doc) : []);
-
-        console.log('3',newArrivalBook);
       })
       .catch((error) => {
         console.error('Error fetching library details:', error);
@@ -130,6 +124,7 @@ const LibraryDetail = () => {
 
     if (!input) {
       setSearchResults([]);
+      setIsModalOpen(false);
       return;
     }
 
@@ -152,6 +147,7 @@ const LibraryDetail = () => {
         lat: parseFloat(poi.noorLat),
         lng: parseFloat(poi.noorLon),
       })));
+      setIsModalOpen(true);
     } catch (error) {
       console.error('Error during search:', error);
     }
@@ -162,6 +158,7 @@ const LibraryDetail = () => {
     setStartCoordinates({ lat: result.lat, lng: result.lng });
     setStartAddress(result.name);
     setSearchResults([]);
+    setIsModalOpen(false);
 
     if (startMarker) startMarker.setMap(null);
     const marker = new window.Tmapv2.Marker({
@@ -235,6 +232,8 @@ const LibraryDetail = () => {
       resCoordType: 'EPSG3857',
       searchOption: '0', // 기본 교통 옵션
     };
+
+    console.log('자동차 경로 요청 데이터:', data);
 
     try {
       const response = await axios.post(
@@ -368,6 +367,9 @@ const LibraryDetail = () => {
 
   return (
     <div className="info-page-container">
+      {isModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}></div>
+      )}
       <div className="info-page-top">
         <div className="info-map">
           <div className="info-map-container">
@@ -384,60 +386,73 @@ const LibraryDetail = () => {
         </div>
         <div className="library-info">
           <h1>{libDetail.libName}</h1>
-          <br />
           <p><strong>주소:</strong> {libDetail.address}</p>
           <p><strong>전화번호:</strong> {libDetail.tel}</p>
           <p><strong>홈페이지 URL:</strong> {libDetail.homepage}</p>
           <p><strong>휴관일:</strong> {libDetail.closed}</p>
           <p><strong>운영시간:</strong> {libDetail.operatingTime}</p>
           <p><strong>소장한 도서의 권수:</strong> {libDetail.BookCount}권</p>
-        </div>
-      </div>
-
-      <hr className="info-page-divider" />
-
-      <div className="find-path-wrap">
-        <br />
-        <h2>길찾기</h2>
-        <div className="find-path">
-          <div className='find-path-menu'>
-            <button
-              className={`route-tab ${travelMode === 'pedestrian' ? 'active' : ''}`}
-              onClick={() => setTravelMode('pedestrian')}
-            >
-              도보
-            </button>
-            <button
-              className={`route-tab ${travelMode === 'car' ? 'active' : ''}`}
-              onClick={() => setTravelMode('car')}
-            >
-              자동차
-            </button>
-          </div>
-          <div className="route-selector">
-            <input
-              type="text"
-              className="route-input"
-              placeholder="출발지 입력"
-              value={startAddress}
-              onChange={handleSearchInput}
-            />
+          <br />
+          <hr className="info-page-divider" />
+          <div className="find-path">
+            <h2>길찾기</h2>
+            <div className='find-path-menu'>
+              <button
+                className={`route-tab ${travelMode === 'pedestrian' ? 'active' : ''}`}
+                onClick={() => {
+                  setTravelMode('pedestrian')
+                  if (startAddress) handleSearchPedestrianRoute();}}
+              >
+                <FaWalking />&nbsp;도보
+              </button>
+              <button
+                className={`route-tab ${travelMode === 'car' ? 'active' : ''}`}
+                onClick={() => {
+                  setTravelMode('car')
+                  if (startAddress) handleSearchCarRoute();}}
+              >
+                <FaCar />&nbsp;자동차
+              </button>
+            </div>
+            <div className="route-selector">
+              <input
+                type="text"
+                className="route-input"
+                placeholder="출발지 입력"
+                value={startAddress}
+                onChange={handleSearchInput}
+              />
+              {isModalOpen && (
+                <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+                  <ul className="modal-search-results">
+                    {searchResults.map((result, index) => (
+                      <li key={index} onClick={() => handleSelectSearchResult(result)}>
+                        <strong>{result.name}</strong>
+                        <p>{result.address}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <button className="route-button" onClick={handleSearchRoute}>
+                길찾기
+              </button>
+            </div>
+            <div className="route-info" >
             <br />
-            <button className="route-button" onClick={handleSearchRoute}>
-              길찾기
-            </button>
+            {routeInfo.distance && routeInfo.time && (
+            <p>
+              <strong>총 거리:</strong> {routeInfo.distance} | <strong>총 시간:</strong> {routeInfo.time}
+              {travelMode === 'car' && (
+                <>
+                  {routeInfo.fare && <> | <strong>총 요금:</strong> {routeInfo.fare}</>}
+                  {routeInfo.taxiFare && <> | <strong>택시 요금:</strong> {routeInfo.taxiFare}</>}
+                </>
+              )}
+            </p>
+            )}
+            </div>
           </div>
-
-          {searchResults && searchResults.length > 0 && (
-            <ul className="search-results">
-              {searchResults.map((result, index) => (
-                <li key={index} onClick={() => handleSelectSearchResult(result)}>
-                  <strong>{result.name}</strong>
-                  <p>{result.address}</p>
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
       </div>
       <hr className="info-page-divider" />
