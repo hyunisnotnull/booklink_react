@@ -7,6 +7,8 @@ import '../../css/include/Slide.css';
 import { FaHeart, FaRegHeart, FaWalking, FaCar } from 'react-icons/fa';
 import { useJwt } from "react-jwt";
 import { useCookies } from 'react-cookie';
+import StartMarkerIcon from '../../comp/StartMarkerIcon';
+import EndMarkerIcon from '../../comp/EndMarkerIcon';
 
 const LibraryDetail = () => {
   const { libCode } = useParams(); // URL에서 libCode 가져오기
@@ -108,6 +110,7 @@ const LibraryDetail = () => {
       position: position,
       map: map,
       title: libDetail.libName,
+      icon: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(EndMarkerIcon)}`,
     });
     setMarkers([marker]); // 새로운 마커를 배열로 저장
 
@@ -165,6 +168,7 @@ const LibraryDetail = () => {
       position: new window.Tmapv2.LatLng(result.lat, result.lng),
       map,
       title: result.name,
+      icon: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(StartMarkerIcon)}`,
     });
     setStartMarker(marker);
     map.setCenter(new window.Tmapv2.LatLng(result.lat, result.lng));
