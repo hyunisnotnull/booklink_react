@@ -334,6 +334,7 @@ const MyLibrary = () => {
                             )}
                         </a>
                       </td>
+                            console.log('1wqe12:::', newBooksForLibraries[library.l_CODE]);
                       <td>
                         <button 
                           className="cancel-button" 
