@@ -40,42 +40,6 @@
     border-radius: 10px;
 }
 
-/* 버튼 액션 영역 */
-.book-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.book-actions button {
-    padding: 10px 15px;
-    font-size: 0.9rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.book-actions button:hover {
-    background-color: #f0f0f0;
-}
-
-.favorite-button.active {
-    background-color: #ffdfdf;
-    border-color: #ff7a7a;
-}
-
-.read-button.active {
-    background-color: #dfffdc;
-    border-color: #7aff7a;
-}
-
-.favorite-button.active:hover,
-.read-button.active:hover {
-    background-color: #ffb3b3;
-    border-color: #ff5252;
-}
-
 /* 기본 정보 스타일 */
 .book-info {
     flex: 1;
@@ -183,3 +147,38 @@ color: red;
 .book-related .next {
     right: 20px; 
 }
+
+/* 버튼 디자인 */
+.book-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.favorite-button {
+    background-color: transparent; 
+    border: none;                   
+    cursor: pointer;            
+    padding: 12px;                  
+    transition: transform 0.3s, color 0.3s;
+    color: #f44336;  
+    font-size: 1.9rem;
+}
+
+/* 독서 상태 버튼 호버 */
+.favorite-button:hover {
+    color: #d32f2f;  
+    transform: scale(1.2);
+}
+
+/* 아이콘 스타일링 */
+.book-actions .read-status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;  
+    height: 40px;  
+    font-size: 2.1rem;  
+    transition: transform 0.3s, color 0.3s;
+}
+
