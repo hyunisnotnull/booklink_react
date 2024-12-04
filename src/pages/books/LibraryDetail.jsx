@@ -387,7 +387,11 @@ const LibraryDetail = () => {
           <br />
           <p><strong>주소:</strong> {libDetail.address}</p>
           <p><strong>전화번호:</strong> {libDetail.tel}</p>
-          <p><strong>홈페이지 URL:</strong> {libDetail.homepage}</p>
+          <p><strong>홈페이지 URL:</strong> 
+          <a href={libDetail.homepage} target="_blank" rel="noopener noreferrer">
+          {libDetail.homepage}
+          </a>
+          </p>
           <p><strong>휴관일:</strong> {libDetail.closed}</p>
           <p><strong>운영시간:</strong> {libDetail.operatingTime}</p>
           <p><strong>소장한 도서의 권수:</strong> {libDetail.BookCount}권</p>
