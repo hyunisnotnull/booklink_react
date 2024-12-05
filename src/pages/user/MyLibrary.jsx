@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useJwt } from "react-jwt";
 import { jwtDecode } from "jwt-decode";
 import { useCookies } from 'react-cookie';
+import { cleanBookName, extractAuthors } from '../../js/Textfilter.js';
 import '../../css/user/MyLibrary.css';
 import Pagination from '../../comp/Pagination';
 
@@ -80,41 +81,39 @@ const MyLibrary = () => {
   }, [isExpired, cookie.token]);
 
   // 대출 가능한 도서관 확인
-  /*
-  const fetchAvailableLibraries = (isbn13) => {
-    if (availableLibraries[isbn13]) return;
-    
-    const libraries = wishLibraryList.map(async library => {
-      return axios.get(`${process.env.REACT_APP_SERVER}/library/loanAvailable`, {
-        params: { bookID: isbn13, libraryCode: library.l_CODE, libraryName: library.l_NAME }
-      })
-      .then(response => {
-        console.log('대출가능여', response.data);
-        const libraries2 = response.data;
-        console.log('대출가능여111', libraries2);
-        
-        setAvailableLibraries(libraries2); // 대출 가능 도서관 이름만 반환
-
-        console.log('대출가능여222', availableLibraries);
-        console.log('대출가능여333', libraries2);
-      })
-      .catch(error => {
-        console.error('대출 가능한 도서관 조회 실패:', error);
-        return null;
-      });
-    });
-
-    // 모든 도서관에 대한 대출 가능 여부를 체크
-    Promise.all(libraries).then(results => {
-      const availableLibraries = results.filter(library => library !== null); // null을 필터링하여 대출 가능한 도서관만 남김
-      console.log('availableLibraries', availableLibraries);
+  const fetchAvailableLibraries = async (isbn13) => {
+    if (availableLibraries[isbn13]) return; // 이미 해당 isbn13에 대한 라이브러리 정보가 있으면 중복 요청 방지
+  
+    try {
+      const libraries = await Promise.all(
+        wishLibraryList.map(async (library) => {
+          const response = await axios.get(`${process.env.REACT_APP_SERVER}/library/loanAvailable`, {
+            params: { bookID: isbn13, libraryCode: library.l_CODE, libraryName: library.l_NAME }
+          });
+  
+          const { libCode, libName } = response.data; // 서버에서 반환한 도서관 정보
+  
+          if (libCode && libName) {
+            console.log('1111', libCode);
+            console.log('2222', libName);
+            return { libCode, libName };
+          } else {
+            return null; // 대출 가능한 도서관이 아니면 null 반환
+          }
+        })
+      );
+  
+      // null 제외한 도서관들만 필터링하여 상태 업데이트
+      const availableLibrariesForBook = libraries.filter(library => library !== null);
       setAvailableLibraries(prevState => ({
         ...prevState,
-        [isbn13]: availableLibraries
+        [isbn13]: availableLibrariesForBook
       }));
-    });
+      console.log('3333', availableLibrariesForBook);
+    } catch (error) {
+      console.error('대출 가능한 도서관 조회 실패:', error);
+    }
   };
-  */
 
 
   // 찜목록에서 특정 책을 취소하는 함수
@@ -252,24 +251,23 @@ const MyLibrary = () => {
                       </td>
                       <td>
                         <a href={`/book/detail/${book.W_ISBN13}`}>
-                          {book.W_NAME}
+                          {cleanBookName(book.W_NAME)}
                         </a>
                       </td>
-                      <td>{book.W_AUTHORS}</td>
+                      <td>{extractAuthors(book.W_AUTHORS)}</td>
                       <td>{book.W_PUBLISHER}</td>
                       <td>
-                        {/* 대출 가능한 도서관을 드롭다운 메뉴로 표시 */}
-                        <select
-                          className="loan-select"
-                          onClick={() => fetchAvailableLibraries(book.W_ISBN13)} // 드롭다운 클릭 시 대출 가능한 도서관 로드
-                        >
-                          <option value="">대출 가능 도서관</option>
-                          {availableLibraries[book.W_ISBN13]?.map(library => (
-                            <option key={library.libCode} value={library.libCode}>
-                              {library.libName} {/* 도서관 이름을 표시 */}
-                            </option>
-                          ))}
-                        </select>
+                      <select
+                        className="loan-select"
+                        onClick={() => fetchAvailableLibraries(book.W_ISBN13)} 
+                      >
+                        <option value="">대출 가능 도서관</option>
+                        {availableLibraries[book.W_ISBN13]?.map(library => (
+                          <option key={library.libCode} value={library.libCode}>
+                            {library.libName}
+                          </option>
+                        ))}
+                      </select>
                       </td>
                       <td>
                         <button 
@@ -334,7 +332,6 @@ const MyLibrary = () => {
                             )}
                         </a>
                       </td>
-                            console.log('1wqe12:::', newBooksForLibraries[library.l_CODE]);
                       <td>
                         <button 
                           className="cancel-button" 
