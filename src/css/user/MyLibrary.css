@@ -172,15 +172,14 @@
     background-color: #fff; 
     border: 1px solid #ddd; 
     border-radius: 4px; 
-    cursor: pointer; 
-    overflow-x: auto;
-    white-space: nowrap;
+    cursor: pointer;
 }
 
 /* 드롭다운 옵션의 너비를 select와 동일하게 고정 */
 .wishlist-table select.loan-select option {
-    width: 250px;
+    display: block;
     white-space: nowrap;
-    overflow: hidden; 
+    overflow: hidden;
     text-overflow: ellipsis;
+    width: 100%;
 }

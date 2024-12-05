@@ -261,16 +261,26 @@ const MyLibrary = () => {
                       <td>{extractAuthors(book.W_AUTHORS)}</td>
                       <td>{book.W_PUBLISHER}</td>
                       <td>
-                        <select className="loan-select" onClick={() => fetchAvailableLibraries(book.W_ISBN13)} onChange={(e) => handleLibrarySelection(e)}>
+                        <select
+                          className="loan-select"
+                          onClick={() => fetchAvailableLibraries(book.W_ISBN13)}
+                          onChange={(e) => handleLibrarySelection(e)}
+                        >
                           <option value="">대출 가능 도서관</option>
                           {availableLibraries[book.W_ISBN13] && availableLibraries[book.W_ISBN13].length > 0 ? (
-                            availableLibraries[book.W_ISBN13].map(library => (
-                              <option key={library.libCode} value={library.libCode}>
-                                {library.libName}
+                            availableLibraries[book.W_ISBN13].map((library) => (
+                              <option
+                                key={library.libCode}
+                                value={library.libCode}
+                                title={library.libName.length > 14 ? library.libName : undefined} // 14자 이상일 때만 title 추가
+                              >
+                                {library.libName.length > 14
+                                  ? library.libName.substring(0, 14).concat("...") // 말줄임표 처리
+                                  : library.libName}
                               </option>
                             ))
                           ) : (
-                            <option value="">없음</option>
+                            <option value="">없음</option> // 검색 결과가 없을 때 표시
                           )}
                         </select>
                       </td>
