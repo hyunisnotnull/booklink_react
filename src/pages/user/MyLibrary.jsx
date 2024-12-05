@@ -90,7 +90,7 @@ const MyLibrary = () => {
       })
       .then(response => {
         console.log('대출가능여', response.data);
-        const libraries2 = response.data.libName;
+        const libraries2 = response.data;
         console.log('대출가능여111', libraries2);
         
         setAvailableLibraries(libraries2); // 대출 가능 도서관 이름만 반환
