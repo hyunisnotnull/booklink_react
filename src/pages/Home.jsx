@@ -44,7 +44,7 @@ const Home = () => {
 
             const libraryCode = libraryCodes[i];
             try {
-              const response = await axios.get(`${process.env.REACT_APP_SERVER}/home/newBooks`, {
+              const response = await axios.get(`${process.env.REACT_APP_SERVER}/book/newBooks`, {
                 params: { libraryCode }
               });
               const { newBooks } = response.data;
@@ -71,7 +71,7 @@ const Home = () => {
     } 
     // 비로그인 신착 도서
     else {
-      axios.get(`${process.env.REACT_APP_SERVER}/home/newBooks`, {
+      axios.get(`${process.env.REACT_APP_SERVER}/book/newBooks`, {
         params: { libraryCode }
       })
       .then(response => {
@@ -94,7 +94,7 @@ const Home = () => {
       });
 
     // 인기 도서 요청
-    axios.get(`${process.env.REACT_APP_SERVER}/home/popularBooks`)
+    axios.get(`${process.env.REACT_APP_SERVER}/book/popularBooks`)
       .then(response => {
         const { popularBooks } = response.data;
         setPopularBooks(popularBooks ? popularBooks.map(item => item.doc) : []);
@@ -104,7 +104,7 @@ const Home = () => {
       });
 
     // 급상승 도서 요청
-    axios.get(`${process.env.REACT_APP_SERVER}/home/risingBooks`)
+    axios.get(`${process.env.REACT_APP_SERVER}/book/risingBooks`)
       .then(response => {
         const { risingBooks } = response.data;
         setRisingBooks(risingBooks ? risingBooks.map(item => item.doc).flat() : []);
