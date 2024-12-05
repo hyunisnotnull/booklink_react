@@ -48,7 +48,7 @@ const MyLibrary = () => {
 
         // 모든 찜 도서관에 대해 신착 도서 요청
         const newBooksRequests = wishLibrariesResponse.data.wishlistLibs.map(async library => {
-          const response = await axios.get(`${process.env.REACT_APP_SERVER}/home/newBooks`, {
+          const response = await axios.get(`${process.env.REACT_APP_SERVER}/book/newBooks`, {
             params: { libraryCode: library.l_CODE }
           });
           const { newBooks } = response.data;

@@ -44,13 +44,9 @@ const LibraryDetail = () => {
       })
       .then(response => {
         const wishLibrarylist = response.data.wishlistLibs;
-        console.log('HI', wishLibrarylist);
         const isLibraryFavorited = wishLibrarylist.some(lib => String(lib.l_CODE) === String(libCode));
-        console.log('libCode:', libCode);
+
         setIsLibraryFavorited(isLibraryFavorited);
-        wishLibrarylist.forEach(lib => {
-          console.log('찜한 도서관 L_CODE:', lib.l_CODE);
-        });
       })
       .catch(error => {
         console.error('찜한 도서관 조회 실패:', error);
@@ -59,18 +55,30 @@ const LibraryDetail = () => {
 
     // 도서관 정보 가져오기
     axios
-      .get(`${process.env.REACT_APP_SERVER}/book/library_detail/${libCode}`)
+      .get(`${process.env.REACT_APP_SERVER}/library/library_detail/${libCode}`)
       .then((response) => {
-        const { libDetail, newArrivalBook } = response.data;
+        const { libDetail } = response.data;
 
         if (libDetail && libDetail.libs.length > 0) {
           setLibDetail(libDetail.libs[0].lib);
         }
-
-        setNewBooks(newArrivalBook ? newArrivalBook.map(item => item.doc) : []);
       })
       .catch((error) => {
         console.error('Error fetching library details:', error);
+      });
+
+    // 신착 도서 요청
+    axios.get(`${process.env.REACT_APP_SERVER}/book/newBooks`, {
+      params: {
+                libraryCode: libCode,  
+              }
+      })
+      .then(response => {
+        const { newBooks } = response.data;
+        setNewBooks(newBooks ? newBooks.slice(0, 8).map(item => item.doc) : []);
+      })
+      .catch(error => {
+        console.error('Error fetching new books:', error);
       });
 
   }, [libCode, decodedToken, isExpired]);
