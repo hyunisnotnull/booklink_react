@@ -7,6 +7,8 @@ import '../../css/include/Slide.css';
 import { FaHeart, FaRegHeart, FaWalking, FaCar } from 'react-icons/fa';
 import { useJwt } from "react-jwt";
 import { useCookies } from 'react-cookie';
+import StartMarkerIcon from '../../comp/StartMarkerIcon';
+import EndMarkerIcon from '../../comp/EndMarkerIcon';
 
 const LibraryDetail = () => {
   const { libCode } = useParams(); // URL에서 libCode 가져오기
@@ -108,6 +110,7 @@ const LibraryDetail = () => {
       position: position,
       map: map,
       title: libDetail.libName,
+      icon: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(EndMarkerIcon)}`,
     });
     setMarkers([marker]); // 새로운 마커를 배열로 저장
 
@@ -165,6 +168,7 @@ const LibraryDetail = () => {
       position: new window.Tmapv2.LatLng(result.lat, result.lng),
       map,
       title: result.name,
+      icon: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(StartMarkerIcon)}`,
     });
     setStartMarker(marker);
     map.setCenter(new window.Tmapv2.LatLng(result.lat, result.lng));
@@ -185,6 +189,9 @@ const LibraryDetail = () => {
       console.error('보행자 지도, 출발지 또는 도착지가 설정되지 않았습니다.');
       return;
     }
+
+    setTravelMode('pedestrian');
+    console.log('사람 ', travelMode);
 
     const headers = { appKey: process.env.REACT_APP_TMAP_API };
     const data = {
@@ -222,6 +229,9 @@ const LibraryDetail = () => {
       return;
     }
 
+    setTravelMode('car');
+    console.log('차 ', travelMode);
+
     const headers = { appKey: process.env.REACT_APP_TMAP_API };
     const data = {
       startX: startCoordinates.lng,
@@ -257,6 +267,8 @@ const LibraryDetail = () => {
     let totalFare = 0; // 총 요금 (자동차 전용)
     let taxiFare = 0; // 택시 요금 (자동차 전용)
 
+    console.log('features::', features);
+
     features.forEach((item) => {
       if (item.geometry.type === 'LineString') {
         item.geometry.coordinates.forEach(([lng, lat]) => {
@@ -269,9 +281,11 @@ const LibraryDetail = () => {
         // 경로 정보를 추출
         totalDistance = item.properties.totalDistance || totalDistance;
         totalTime = item.properties.totalTime || totalTime;
-        if (travelMode === 'car') { 
+        console.log('travelMode   travelMode::', travelMode);
+        if (item.properties.taxiFare) { 
           totalFare = item.properties.totalFare || totalFare; // 자동차 요금 정보 추가
           taxiFare = item.properties.taxiFare || taxiFare; // 택시 요금 정보 추가
+          console.log('222222::', taxiFare);
         }
       }
     });
@@ -316,11 +330,13 @@ const LibraryDetail = () => {
       setRouteInfo({ 
         distance: (totalDistance / 1000).toFixed(2) + ' km',
         time: Math.ceil(totalTime / 60) + ' 분',
-        ...(travelMode === 'car' && {
+        ...(taxiFare > 0 && {
           fare: totalFare ? totalFare.toLocaleString() + ' 원' : null,
           taxiFare: taxiFare ? taxiFare.toLocaleString() + ' 원' : null,
         }),
       });
+      console.log('travelMode::', travelMode);
+      console.log('taxiFare222::', taxiFare);
     } else {
       console.error('경로 데이터가 유효하지 않습니다.');
     }
@@ -404,7 +420,6 @@ const LibraryDetail = () => {
               <button
                 className={`route-tab ${travelMode === 'pedestrian' ? 'active' : ''}`}
                 onClick={() => {
-                  setTravelMode('pedestrian')
                   if (startAddress) handleSearchPedestrianRoute();}}
               >
                 <FaWalking />&nbsp;도보
@@ -412,7 +427,6 @@ const LibraryDetail = () => {
               <button
                 className={`route-tab ${travelMode === 'car' ? 'active' : ''}`}
                 onClick={() => {
-                  setTravelMode('car')
                   if (startAddress) handleSearchCarRoute();}}
               >
                 <FaCar />&nbsp;자동차

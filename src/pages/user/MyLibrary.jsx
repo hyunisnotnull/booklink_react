@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useJwt } from "react-jwt";
 import { jwtDecode } from "jwt-decode";
 import { useCookies } from 'react-cookie';
+import { cleanBookName, extractAuthors } from '../../js/Textfilter.js';
 import '../../css/user/MyLibrary.css';
 import Pagination from '../../comp/Pagination';
 
@@ -12,6 +13,7 @@ const MyLibrary = () => {
   const [wishList, setWishList] = useState([]);
   const [wishLibraryList, setWishLibraryList] = useState([]);
   const [newBooksForLibraries, setNewBooksForLibraries] = useState({});
+  const [availableLibraries, setAvailableLibraries] = useState({});
   const [selectedTab, setSelectedTab] = useState('books');
   const [currentPage, setCurrentPage] = useState(1); 
   const [itemsPerPage] = useState(5);   
@@ -80,6 +82,42 @@ const MyLibrary = () => {
       });
 
   }, [isExpired, cookie.token]);
+
+  // 대출 가능한 도서관 확인
+  const fetchAvailableLibraries = async (isbn13) => {
+    if (availableLibraries[isbn13]) return; // 이미 해당 isbn13에 대한 라이브러리 정보가 있으면 중복 요청 방지
+  
+    try {
+      const libraries = await Promise.all(
+        wishLibraryList.map(async (library) => {
+          const response = await axios.get(`${process.env.REACT_APP_SERVER}/library/loanAvailable`, {
+            params: { bookID: isbn13, libraryCode: library.l_CODE, libraryName: library.l_NAME }
+          });
+  
+          const { libCode, libName } = response.data; // 서버에서 반환한 도서관 정보
+  
+          if (libCode && libName) {
+            console.log('1111', libCode);
+            console.log('2222', libName);
+            return { libCode, libName };
+          } else {
+            return null; // 대출 가능한 도서관이 아니면 null 반환
+          }
+        })
+      );
+  
+      // null 제외한 도서관들만 필터링하여 상태 업데이트
+      const availableLibrariesForBook = libraries.filter(library => library !== null);
+      setAvailableLibraries(prevState => ({
+        ...prevState,
+        [isbn13]: availableLibrariesForBook
+      }));
+      console.log('3333', availableLibrariesForBook);
+    } catch (error) {
+      console.error('대출 가능한 도서관 조회 실패:', error);
+    }
+  };
+
 
   // 찜목록에서 특정 책을 취소하는 함수
   const handleCancelFavorite = (isbn13) => {
@@ -197,6 +235,7 @@ const MyLibrary = () => {
                     <th>제목</th>
                     <th>저자</th>
                     <th>출판사</th>
+                    <th>대출 가능 도서관</th>
                     <th>독서</th>
                     <th>찜 취소</th>
                   </tr>
@@ -215,11 +254,24 @@ const MyLibrary = () => {
                       </td>
                       <td>
                         <a href={`/book/detail/${book.W_ISBN13}`}>
-                          {book.W_NAME}
+                          {cleanBookName(book.W_NAME)}
                         </a>
                       </td>
-                      <td>{book.W_AUTHORS}</td>
+                      <td>{extractAuthors(book.W_AUTHORS)}</td>
                       <td>{book.W_PUBLISHER}</td>
+                      <td>
+                      <select
+                        className="loan-select"
+                        onClick={() => fetchAvailableLibraries(book.W_ISBN13)} 
+                      >
+                        <option value="">대출 가능 도서관</option>
+                        {availableLibraries[book.W_ISBN13]?.map(library => (
+                          <option key={library.libCode} value={library.libCode}>
+                            {library.libName}
+                          </option>
+                        ))}
+                      </select>
+                      </td>
                       <td>
                         <button 
                           className="read-button" 
