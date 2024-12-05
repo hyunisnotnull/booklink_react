@@ -2,6 +2,7 @@
 .wishlist-container {
     width: 1200px;
     margin: 50px auto;
+    min-height: 510px;
 }
 
 .wishlist-title {
@@ -178,8 +179,8 @@
 
 /* 드롭다운 옵션의 너비를 select와 동일하게 고정 */
 .wishlist-table select.loan-select option {
-    width: 200px; /* 옵션 너비 고정 */
+    width: 250px;
     white-space: nowrap;
-    overflow: hidden; /* 텍스트 넘침을 숨기기 */
+    overflow: hidden; 
     text-overflow: ellipsis;
 }
