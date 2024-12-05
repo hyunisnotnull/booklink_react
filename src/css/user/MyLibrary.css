@@ -2,6 +2,7 @@
 .wishlist-container {
     width: 1200px;
     margin: 50px auto;
+    min-height: 510px;
 }
 
 .wishlist-title {
