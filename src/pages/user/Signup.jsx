@@ -124,19 +124,20 @@ const Signup = () => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append("u_id", uId);
-        formData.append("u_pw", uPw);
-        formData.append("u_sex", uGender);
-        formData.append("u_age", uAge);
-        formData.append("u_zipcode", uZipcode);
-        formData.append("u_phone", uPhone);
-        formData.append("u_post_address", uAddress);
-        formData.append("u_detail_address", uDetailAddress);
+        const data = {
+            u_id: uId,
+            u_pw: uPw,
+            u_sex: uGender,
+            u_age: uAge,
+            u_zipcode: uZipcode,
+            u_phone: uPhone,
+            u_post_address: uAddress,
+            u_detail_address: uDetailAddress,
+          };
 
         try{
             const url=`${process.env.REACT_APP_SERVER}/user/signup`;
-            const res = await axios.post(url, formData);
+            const res = await axios.post(url, data);
             console.log('data---> ', res.data)
             if (res.data.u_ID !== null) {
                 navigate('/signin');
