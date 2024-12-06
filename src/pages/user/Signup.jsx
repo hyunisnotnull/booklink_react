@@ -1,34 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import DaumPostcode from 'react-daum-postcode';
 import '../../css/user/signup.css';
-
+import Slide from '../../comp/Slide';
 
 const Signup = () => {
-
     const [uZipcode, setUZipcode] = useState(""); // 우편번호
     const [uAddress, setUAddress] = useState(""); // //api상의 주소
     const [uDetailAddress, setUDetailAddress] = useState(""); //상세 주소
-    // const [detail2address, setDetail2address] = useState(""); //상세주소
-    // const {addDocument, response } = useFirestore('manmul');
     const [openPostcode, setOpenPostcode] = useState(false); //카카오api
+    const [events, setEvents] = useState([]);
 
+    // useEffect
+    useEffect(() => {
+        axios.get(`${process.env.REACT_APP_SERVER}/event/list`)
+      .then(response => {
+        const { events } = response.data;
+        setEvents(events ? events.filter(event => event.e_active === 3) : []);
+      })
+      .catch(error => {
+        console.error('Error fetching events:', error);
+      });
+    }, []);
+    
     const clickButton =() =>{
         setOpenPostcode(current => !current);
     }
 
     const selectAddress = (data) => {
-        console.log(`
-                주소: ${data.address},
-                우편번호: ${data.zonecode}
-            `)
-            setUZipcode(data.zonecode);
-            setUAddress(data.address)
-            setOpenPostcode(false);
+        setUZipcode(data.zonecode);
+        setUAddress(data.address)
+        setOpenPostcode(false);
     }
- 
-
 
     // Hook
     const [uId, setUId] = useState('');
@@ -36,35 +40,47 @@ const Signup = () => {
     const [uGender, setUGender] = useState(0);
     const [uAge, setUAge] = useState(0);
     const [uPhone, setUPhone] = useState('');
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
-    // // 유효성 검사
-    // const validateInputs = () => {
-    //     const newErrors = {};
-    //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;    // @가 있어야 하고 앞, 뒤로 문자가 있어야 함
-    //     const pwRegex = /^.{6,}$/;                          // 6자리 이상
-    //     const nickRegex = /^[가-힣a-zA-Z0-9]{2,6}$/;        // 한글, 영어 대소문자, 숫자가 2 이상 6 이하
-    //     const phoneRegex = /^\d{3}-\d{4}-\d{4}$/;           // {}안에 숫자가 지정한 개수 만큼 있어야 함
+    // 유효성 검사
+    const validateInputs = () => {
+        const newErrors = {};
 
-    //     if (!emailRegex.test(uId)) {
-    //         newErrors.uId = "올바른 이메일 주소를 입력하세요.";
-    //     }
+        // 이메일 형식 검사
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(uId)) {
+            newErrors.uId = "올바른 이메일 주소를 입력하세요.";
+        }
 
-    //     if (!pwRegex.test(uPw)) {
-    //         newErrors.uPw = "비밀번호는 6자 이상이어야 합니다.";
-    //     }
+        // 비밀번호 길이 검사
+        const pwRegex = /^.{6,}$/;
+        if (!pwRegex.test(uPw)) {
+            newErrors.uPw = "비밀번호는 6자 이상이어야 합니다.";
+        }
 
-    //     if (!nickRegex.test(uNick)) {
-    //         newErrors.uNick = "닉네임은 2자 이상 6자 이하의 한u글, 영어 또는 숫자여야 합니다.";
-    //     }
+        // 전화번호 형식 검사
+        const phoneRegex = /^\d{3}-\d{4}-\d{4}$/;
+        if (!phoneRegex.test(uPhone)) {
+            newErrors.uPhone = "전화번호는 '000-0000-0000' 형식이어야 합니다.";
+        }
 
-    //     if (!phoneRegex.test(uPhone)) {
-    //         newErrors.uPhone = "전화번호는 '000-0000-0000' 형식이어야 합니다.";
-    //     }
-        
-    //     setErrors(newErrors);
-    //     return Object.keys(newErrors).length === 0;
-    // }
+        // 성별 및 나이 선택 검사
+        if (!uGender) {
+            newErrors.uGender = "성별을 선택하세요.";
+        }
+        if (!uAge) {
+            newErrors.uAge = "나이를 선택하세요.";
+        }
+
+        // 주소 입력 검사
+        if (!uZipcode || !uAddress || !uDetailAddress) {
+            newErrors.uAddress = "우편번호, 주소, 상세 주소를 모두 입력해야 합니다.";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
 
     const uDetailAddressHandler = (e) => {
         setUDetailAddress(e.target.value);
@@ -77,10 +93,6 @@ const Signup = () => {
     const uPwChangeHandler = (e) => {
         setUPw(e.target.value);
     }
-
-    // const uNickChangeHandler = (e) => {
-    //     setUNick(e.target.value);
-    // }
 
     const uGenderChangeHandler = (e) => {
         setUGender(e.target.value);
@@ -105,12 +117,12 @@ const Signup = () => {
         setUPhone(changePhoneNumber);
     }
 
-    // const closeClickHandler = () => {
-    //     navigate('/login');
-    // }
-
     const handleSubmit = async(e) => {
         e.preventDefault();
+
+        if (!validateInputs()) {
+            return;
+        }
 
         const formData = new FormData();
         formData.append("u_id", uId);
@@ -135,72 +147,9 @@ const Signup = () => {
    
         } catch(err){
             console.log('err---> ', err);
-            // console.log(err.response.status);
         }
 
     }
-
-    //     // 유효성 검사
-    //     if (!validateInputs()) {
-    //         return;
-    //     }
-
-    //     // 비밀번호 암호화
-    //     const encryptedPw = encrypt(uPw);
-
-    //     if (acMemDB === null) {
-    //         let newMemObj = {
-    //             [uId]: {
-    //                 'uId': uId,
-    //                 'uPw': encryptedPw,
-    //                 'uNick': uNick,
-    //                 'uGender': uGender,
-    //                 'uAge': uAge,
-    //                 'uPhone': uPhone,
-    //                 'uPicture': uPicture,
-    //             }
-    //         }
-    //         setAcMemDB(newMemObj);
-
-    //     } else {
-    //         let aldAcMem = JSON.parse(acMemDB);
-    //         aldAcMem[uId] = {
-    //             'uId': uId,
-    //             'uPw': encryptedPw,
-    //             'uNick': uNick,
-    //             'uGender': uGender,
-    //             'uAge': uAge,
-    //             'uPhone': uPhone,
-    //             'uPicture': uPicture,
-    //         }
-    //         setAcMemDB(aldAcMem);
-    //     }
-
-    //     // 찜 목록 생성
-    //     let acFavDB = getAcFavDB();
-    //     if (acFavDB === null) {
-    //         let newFavs = {
-    //             [uId]: {}
-    //         }
-    //         setAcFavDB(newFavs);
-
-    //     } else {
-    //         let aldAcFavDB = JSON.parse(acFavDB);
-    //         aldAcFavDB[uId] = {};
-    //         setAcFavDB(aldAcFavDB);
-    //     }
-    //     alert('회원가입이 완료되었습니다.');
-        
-    //     // 입력 정보 초기화
-    //     setUId('');
-    //     setUPw('');
-    //     setUNick('');
-    //     setUGender(0);
-    //     setUAge(0);
-    //     setUPhone('');
-    //     setUPicture(profilePic);
-    //     navigate('/login');
-    // }
 
     const style = {
         background : "rgba(0,0,0,0.25)",
@@ -214,19 +163,15 @@ const Signup = () => {
     return (
         <div id="sign_up_modal">
             <div className="sign_up_modal_content">
-            <form onSubmit={handleSubmit}>
-                {/* <div className="close" onClick={closeClickHandler}>
-                    X
-                </div> */}
+            <form className='sign_up_form' onSubmit={handleSubmit}>
                 <h2>회원 가입</h2>
                 <input name="u_id" className="txt_basic" type="text" value={uId} onChange={uIdChangeHandler} placeholder="아이디 입력하세요" />
-
                 <br />
+                {errors.uId && <span className="sign-error-msg">{errors.uId}</span>}
                 <input name="u_pw" className="txt_basic" type="password" value={uPw} onChange={uPwChangeHandler} placeholder="비밀번호를 입력하세요" />
-
                 <br />
+                {errors.uPw && <span className="sign-error-msg">{errors.uPw}</span>}
                 <input name="u_phone" className="txt_basic" type="text" value={uPhone} onChange={uPhoneChangeHandler} placeholder="휴대전화번호" />
-
                 <select name="u_sex" className="gen" id="gen" value={uGender} onChange={uGenderChangeHandler}>
                     <option value="">성별</option>
                     <option value="M">남성</option>
@@ -241,6 +186,9 @@ const Signup = () => {
                     <option value="50">50대</option>
                     <option value="60">60대 이상</option>
                 </select>
+                {errors.uPhone && <span className="sign-error-msg">{errors.uPhone}</span>}
+                {errors.uGender && <span className="sign-error-msg">{errors.uGender}</span>}
+                {errors.uAge && <span className="sign-error-msg">{errors.uAge}</span>}
                 <br />
                 <input type="hidden" id="user_post_address" name="u_post_address" />
                 <div className="address-group">
@@ -255,11 +203,15 @@ const Signup = () => {
                 <br/>
                 <input className="txt_basic" type="text" id="user_address" name="u_address"  value={uAddress} placeholder="주소" required />
                 <br/>
-                <input className="txt_basic" type="text" id="user_detailAddress" name="u_detail_address"  value={uDetailAddress} onChange={uDetailAddressHandler} placeholder="상세주소" required />
+                <input className="txt_basic" type="text" id="user_detailAddress" name="u_detail_address"  value={uDetailAddress} onChange={uDetailAddressHandler} placeholder="상세주소"  />
                 </div>
+                {errors.uAddress && <span className="sign-error-msg">{errors.uAddress}</span>}
                 <br/>
                 <button type="submit" className="btn_basic" >회원 가입</button>
                 </form>
+            </div>
+            <div className="our-event-section">
+                <Slide items={events} itemsPerSlide={1} autoSlide={true} /> 
             </div>
         </div>
     );

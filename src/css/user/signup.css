@@ -1,5 +1,21 @@
+#sign_up_modal {
+    width: 550px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px auto;
+    margin-top: 50px;
+    margin-bottom: 100px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
 h2 {
     margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 #sign_up_modal input {
@@ -47,8 +63,33 @@ button {
     margin-bottom: 10px;
 }
 
-#sign_up_modal {
-width: 80%;
-margin: 0 auto;
-text-align: center;
+.sign_up_form {
+    margin-bottom: 20px;
+}
+
+.our-event-section .slider {
+    justify-content: unset;
+    width: 100%;
+    display: block;
+}
+
+.our-event-section .slider .book-list .book-items{
+    justify-content: unset;
+    width: 500px;
+    display: block;
+    margin: 0 auto;
+}
+
+.our-event-section .slider .book-item img {
+    width: 500px;
+    object-fit: contain;
+    height: 200px;
+}
+
+.our-event-section .slider .book-item a {
+    display: inline;
+}
+
+.our-event-section .slider-button {
+    display: none;
 }
