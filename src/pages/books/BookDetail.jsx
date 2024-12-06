@@ -18,7 +18,6 @@ const BookDetail = () => {
   const [isRead, setIsRead] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isLibraryLoading, setIsLibraryLoading] = useState(true);
 
   const [cookie] =  useCookies();
   const { decodedToken, isExpired } = useJwt(cookie.token);
@@ -39,6 +38,7 @@ const BookDetail = () => {
         getLocation();
       }
       
+      // 찜 도서 확인
       if (decodedToken && !isExpired) {
         axios.post(`${process.env.REACT_APP_SERVER}/user/wishBooks`, {
           userId: decodedToken.userId
@@ -56,26 +56,31 @@ const BookDetail = () => {
         });
       }
 
-      setIsLibraryLoading(true);
       setIsLoading(true);
 
       // 도서 상세 정보 가져오기
       axios
         .get(`${process.env.REACT_APP_SERVER}/book/detail/${bookID}`)
         .then((response) => {
-          const { bookDetail, bookRelated } = response.data;
+          const { bookDetail } = response.data;
           if (bookDetail && bookDetail.detail.length > 0) {
             setBookDetail(bookDetail.detail[0].book);
           }
-
-          setBookRelated(bookRelated ? bookRelated.map(item => item.book) : []);
         })
         .catch((error) => {
           console.error('Error fetching book details:', error);
         })
-        .finally(() => {
-          setIsLoading(false);
-        });
+      
+      // 관련 도서 가져오기
+      axios
+      .get(`${process.env.REACT_APP_SERVER}/book/relatedBook/${bookID}`)
+      .then((response) => {
+        const { bookRelated } = response.data;
+        setBookRelated(bookRelated ? bookRelated.map(item => item.book) : []);
+      })
+      .catch((error) => {
+        console.error('Error fetching book details:', error);
+      })
 
       // 대출 가능한 도서관 정보 가져오기
       if (location.latitude !== null && location.longitude !== null) {
@@ -95,12 +100,12 @@ const BookDetail = () => {
             console.error('Error fetching available libraries:', error);
           })
           .finally(() => {
-            setIsLibraryLoading(false); // 도서관 로딩 완료
+            setIsLoading(false);
           });
       } else {
         // 위치 정보가 없으면 도서관 정보는 빈 배열로 설정
         setLibraries([]);
-        setIsLibraryLoading(false);
+        setIsLoading(false);
       }
 
   }, [bookID, location, decodedToken, isExpired]);
@@ -167,7 +172,7 @@ const BookDetail = () => {
 
   return (
     <div className="book-detail-container">
-      {isLoading || isLibraryLoading ? (
+      {isLoading ? (
         <div className="loading-container">
           <div className="loading-circle"></div>
         </div>

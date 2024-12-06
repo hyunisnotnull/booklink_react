@@ -48,12 +48,10 @@ const MyLibrary = () => {
       .then(([wishBooksResponse, wishLibrariesResponse]) => {
         setWishList(wishBooksResponse.data.wishlistBooks || []);
         setWishLibraryList(wishLibrariesResponse.data.wishlistLibs || []);
-        console.log('찜 도서::', wishBooksResponse.data.wishlistBooks);
-        console.log('내 도서관::', wishLibrariesResponse.data.wishlistLibs);
 
         // 모든 찜 도서관에 대해 신착 도서 요청
         const newBooksRequests = wishLibrariesResponse.data.wishlistLibs.map(async library => {
-          const response = await axios.get(`${process.env.REACT_APP_SERVER}/home/newBooks`, {
+          const response = await axios.get(`${process.env.REACT_APP_SERVER}/book/newBooks`, {
             params: { libraryCode: library.l_CODE }
           });
           const { newBooks } = response.data;
@@ -85,7 +83,7 @@ const MyLibrary = () => {
 
   // 대출 가능한 도서관 확인
   const fetchAvailableLibraries = async (isbn13) => {
-    if (availableLibraries[isbn13]) return; // 이미 해당 isbn13에 대한 라이브러리 정보가 있으면 중복 요청 방지
+    if (availableLibraries[isbn13]) return; // 이미 해당 isbn13에 대한 도서관 정보가 있으면 중복 요청 방지
   
     try {
       const libraries = await Promise.all(
@@ -97,8 +95,6 @@ const MyLibrary = () => {
           const { libCode, libName } = response.data; // 서버에서 반환한 도서관 정보
   
           if (libCode && libName) {
-            console.log('1111', libCode);
-            console.log('2222', libName);
             return { libCode, libName };
           } else {
             return null; // 대출 가능한 도서관이 아니면 null 반환
@@ -112,9 +108,17 @@ const MyLibrary = () => {
         ...prevState,
         [isbn13]: availableLibrariesForBook
       }));
-      console.log('3333', availableLibrariesForBook);
     } catch (error) {
-      console.error('대출 가능한 도서관 조회 실패:', error);
+      alert('대출 가능한 도서관 조회에 실패 했습니다.');
+      console.log(error)
+    }
+  };
+
+  // 대출 가능 도서관 옵션 선택시 이동 함수
+  const handleLibrarySelection = (event) => {
+    const selectedLibraryCode = event.target.value; // 선택한 도서관의 libCode
+    if (selectedLibraryCode) {
+      window.location.href = `/book/library_detail/${selectedLibraryCode}`;
     }
   };
 
@@ -260,17 +264,28 @@ const MyLibrary = () => {
                       <td>{extractAuthors(book.W_AUTHORS)}</td>
                       <td>{book.W_PUBLISHER}</td>
                       <td>
-                      <select
-                        className="loan-select"
-                        onClick={() => fetchAvailableLibraries(book.W_ISBN13)} 
-                      >
-                        <option value="">대출 가능 도서관</option>
-                        {availableLibraries[book.W_ISBN13]?.map(library => (
-                          <option key={library.libCode} value={library.libCode}>
-                            {library.libName}
-                          </option>
-                        ))}
-                      </select>
+                        <select
+                          className="loan-select"
+                          onClick={() => fetchAvailableLibraries(book.W_ISBN13)}
+                          onChange={(e) => handleLibrarySelection(e)}
+                        >
+                          <option value="">대출 가능 도서관</option>
+                          {availableLibraries[book.W_ISBN13] && availableLibraries[book.W_ISBN13].length > 0 ? (
+                            availableLibraries[book.W_ISBN13].map((library) => (
+                              <option
+                                key={library.libCode}
+                                value={library.libCode}
+                                title={library.libName.length > 14 ? library.libName : undefined} // 14자 이상일 때만 title 추가
+                              >
+                                {library.libName.length > 14
+                                  ? library.libName.substring(0, 14).concat("...") // 말줄임표 처리
+                                  : library.libName}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">없음</option> // 검색 결과가 없을 때 표시
+                          )}
+                        </select>
                       </td>
                       <td>
                         <button 
@@ -347,11 +362,11 @@ const MyLibrary = () => {
                   ))}
                 </tbody>
               </table>
-              <Pagination 
+              {/* <Pagination 
                 currentPage={currentPage} 
                 totalCount={Math.ceil(wishLibraryList.length / itemsPerPage)} 
                 onPageChange={handlePageChange}
-              />
+              /> */}
             </>
           ) : (
             <p className="no-items">찜한 도서관이 없습니다.</p>

@@ -2,6 +2,8 @@
 .wishlist-container {
     width: 1200px;
     margin: 50px auto;
+    min-height: 510px;
+    margin-bottom: 100px;
 }
 
 .wishlist-title {
@@ -66,13 +68,13 @@
 
 /* 독서 상태 버튼 (책 아이콘) */
 .read-button {
-    color: #555; 
+    color: #4caf50; 
     font-size: 1.8rem;
 }
 
 /* 독서 상태 버튼 호버 */
 .read-button:hover {
-    color: #4caf50;  
+    color: #388e3c;  
     transform: scale(1.2); 
 }
 
@@ -171,15 +173,14 @@
     background-color: #fff; 
     border: 1px solid #ddd; 
     border-radius: 4px; 
-    cursor: pointer; 
-    overflow-x: auto;
-    white-space: nowrap;
+    cursor: pointer;
 }
 
 /* 드롭다운 옵션의 너비를 select와 동일하게 고정 */
 .wishlist-table select.loan-select option {
-    width: 200px; /* 옵션 너비 고정 */
+    display: block;
     white-space: nowrap;
-    overflow: hidden; /* 텍스트 넘침을 숨기기 */
+    overflow: hidden;
     text-overflow: ellipsis;
+    width: 100%;
 }
