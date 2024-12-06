@@ -21,14 +21,14 @@ const MyLibrary = () => {
   const [cookie] =  useCookies();
   const { isExpired, decodedToken } = useJwt(cookie.token);
 
-  const parseJWT = jwtDecode(cookie.token);
+  // const parseJWT = jwtDecode(cookie.token);
 
   const navigate = useNavigate();
 
   // useEffect
   useEffect(() => {
 
-    if (isExpired || !cookie.token) {
+    if (!cookie.token || isExpired) {
       alert('로그인 후 내 서재를 확인할 수 있습니다.');
       return navigate('/signin');
     }

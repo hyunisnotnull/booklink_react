@@ -13,8 +13,8 @@ const Header = () => {
 
 
   useEffect(() => {
-
-  }, [isExpired, cookie.token, decodedToken]);
+console.log(isExpired)
+  }, [isExpired, cookie.token]);
       
 
   const handleSearchSubmit = (e) => {
