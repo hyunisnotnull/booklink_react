@@ -8,6 +8,7 @@ import { useCookies } from 'react-cookie';
 import { cleanBookName, extractAuthors } from '../../js/Textfilter.js';
 import '../../css/user/MyLibrary.css';
 import Pagination from '../../comp/Pagination';
+import Swal from 'sweetalert2';
 
 const MyLibrary = () => {
   const [wishList, setWishList] = useState([]);
@@ -29,8 +30,14 @@ const MyLibrary = () => {
   useEffect(() => {
 
     if (!cookie.token || isExpired) {
-      alert('로그인 후 내 서재를 확인할 수 있습니다.');
-      return navigate('/signin');
+      Swal.fire({
+        title: '로그인 후 내 서재를 확인할 수 있습니다.',
+        icon: 'warning',
+        confirmButtonText: '확인'
+      }).then(() => {
+        navigate('/signin');
+      });
+      return;
     }
 
     const parseJWT = jwtDecode(cookie.token);
@@ -76,7 +83,12 @@ const MyLibrary = () => {
       })
       .catch(error => {
         console.error('찜목록 조회 실패:', error);
-        alert('찜목록을 불러오는 데 실패했습니다.');
+        Swal.fire({
+          title: '찜목록 조회 실패',
+          text: '찜목록을 불러오는 데 실패했습니다.',
+          icon: 'error',
+          confirmButtonText: '확인'
+        });
       });
 
   }, [isExpired, cookie.token]);
@@ -109,7 +121,12 @@ const MyLibrary = () => {
         [isbn13]: availableLibrariesForBook
       }));
     } catch (error) {
-      alert('대출 가능한 도서관 조회에 실패 했습니다.');
+      Swal.fire({
+        title: '대출 가능한 도서관 조회 실패',
+        text: '대출 가능한 도서관을 조회하는데 문제가 발생했습니다.',
+        icon: 'error',
+        confirmButtonText: '확인'
+      });
       console.log(error)
     }
   };
@@ -125,30 +142,50 @@ const MyLibrary = () => {
 
   // 찜목록에서 특정 책을 취소하는 함수
   const handleCancelFavorite = (isbn13) => {
-    const confirmCancel = window.confirm("정말 도서를 삭제 하시겠습니까?");
-
-    if (confirmCancel) {
-      axios.delete(`${process.env.REACT_APP_SERVER}/user/cancleWishBook`, {
-        data: { W_U_ID: decodedToken.userId, W_ISBN13: isbn13 }
-      })
-      .then(response => {
-        alert(response.data.message);
-        setWishList(prevState => prevState.filter(book => book.W_ISBN13 !== isbn13)); // 상태에서 해당 도서 삭제
-      })
-      .catch(error => {
-        alert('찜 취소 실패');
-        console.error(error);
-      });
-    } else {
-      alert("내 도서 삭제를 취소했습니다.");
-    }
-  };
+    Swal.fire({
+      title: '정말 도서를 삭제 하시겠습니까?',
+      text: '이 작업은 취소할 수 없습니다.',
+      icon: 'warning',
+      showCancelButton: true,  // 취소 버튼을 표시
+      confirmButtonText: '삭제',
+      cancelButtonText: '취소',
+    }).then((result) => {
+      if (result.isConfirmed) {  // 사용자가 '삭제' 버튼을 클릭했을 때
+        axios.delete(`${process.env.REACT_APP_SERVER}/user/cancleWishBook`, {
+          data: { W_U_ID: decodedToken.userId, W_ISBN13: isbn13 }
+        })
+        .then(response => {
+          Swal.fire({
+            title: '찜 취소 성공',
+            text: response.data.message,
+            icon: 'success',
+            confirmButtonText: '확인'
+          });
+          setWishList(prevState => prevState.filter(book => book.W_ISBN13 !== isbn13)); // 상태에서 해당 도서 삭제
+        })
+        .catch(error => {
+          Swal.fire({
+            title: '찜 취소 실패',
+            text: '찜 취소에 실패했습니다.',
+            icon: 'error',
+            confirmButtonText: '확인'
+          });
+          console.error(error);
+        });
+      } else {
+        Swal.fire({
+          title: '취소됨',
+          text: "내 도서 삭제를 취소했습니다.",
+          icon: 'info',
+          confirmButtonText: '확인'
+        });
+      }
+    });
+  };  
 
   // 찜목록에서 특정 책 읽음/읽지 않음 처리
   const handleReadBook = (isbn13, currentStatus) => {
     const newStatus = currentStatus === 0 ? 1 : 0; // 읽지 않음은 0, 읽음은 1
-
-    console.log('read?::', newStatus)
 
     axios.put(`${process.env.REACT_APP_SERVER}/user/readWishBook`, {
       W_U_ID: decodedToken.userId,
@@ -156,7 +193,12 @@ const MyLibrary = () => {
       W_B_READ: newStatus
     })
       .then(response => {
-        alert(response.data.message);
+        Swal.fire({
+          title: '상태 변경 성공',
+          text: response.data.message,
+          icon: 'success',
+          confirmButtonText: '확인'
+        });
         setWishList(prevState =>
           prevState.map(book =>
             book.W_ISBN13 === isbn13 ? { ...book, W_B_READ: newStatus } : book
@@ -164,31 +206,59 @@ const MyLibrary = () => {
         );
       })
       .catch(error => {
-        alert('읽음 처리 실패');
+        Swal.fire({
+          title: '상태 변경 실패',
+          text: '읽음 처리에 실패했습니다.',
+          icon: 'error',
+          confirmButtonText: '확인'
+        });
         console.error(error);
       });
   };
 
   // 찜목록에서 특정 도서관을 취소하는 함수
   const handleCancelLibrary = (l_CODE) => {
-    const confirmCancel = window.confirm("정말 도서관을 삭제 하시겠습니까?");
-    if(confirmCancel) {
-
-      axios.delete(`${process.env.REACT_APP_SERVER}/user/cancleWishLib`, {
-        data: { ML_U_ID: decodedToken.userId, ML_L_CODE: l_CODE }
-      })
-      .then(response => {
-        alert(response.data.message);
-        setWishLibraryList(prevState => prevState.filter(library => library.l_CODE !== l_CODE));
-      })
-      .catch(error => {
-        alert('내 도서관 삭제에 실패했습니다.');
-        console.error(error);
-      });
-    } else {
-      alert("내 도서관 삭제를 취소했습니다.");
-    }
+    Swal.fire({
+      title: '정말 도서관을 삭제 하시겠습니까?',
+      text: '이 작업은 취소할 수 없습니다.',
+      icon: 'warning',
+      showCancelButton: true,  // 취소 버튼을 표시
+      confirmButtonText: '삭제',
+      cancelButtonText: '취소',
+    }).then((result) => {
+      if (result.isConfirmed) {  // 사용자가 '삭제' 버튼을 클릭했을 때
+        axios.delete(`${process.env.REACT_APP_SERVER}/user/cancleWishLib`, {
+          data: { ML_U_ID: decodedToken.userId, ML_L_CODE: l_CODE }
+        })
+        .then(response => {
+          Swal.fire({
+            title: '도서관 삭제 성공',
+            text: response.data.message,
+            icon: 'success',
+            confirmButtonText: '확인'
+          });
+          setWishLibraryList(prevState => prevState.filter(library => library.l_CODE !== l_CODE)); // 상태에서 해당 도서관 삭제
+        })
+        .catch(error => {
+          Swal.fire({
+            title: '도서관 삭제 실패',
+            text: '도서관 삭제에 실패했습니다.',
+            icon: 'error',
+            confirmButtonText: '확인'
+          });
+          console.error(error);
+        });
+      } else {
+        Swal.fire({
+          title: '취소됨',
+          text: "내 도서관 삭제를 취소했습니다.",
+          icon: 'info',
+          confirmButtonText: '확인'
+        });
+      }
+    });
   };
+  
 
   // 페이지 변경 시 호출되는 함수
   const handlePageChange = (pageNumber) => {
@@ -236,7 +306,7 @@ const MyLibrary = () => {
                 <thead>
                   <tr>
                     <th>이미지</th>
-                    <th>제목</th>
+                    <th>도서명</th>
                     <th>저자</th>
                     <th>출판사</th>
                     <th>대출 가능 도서관</th>
@@ -325,7 +395,7 @@ const MyLibrary = () => {
                 <thead>
                   <tr>
                     <th>도서관명</th>
-                    <th>위치</th>
+                    <th>주소</th>
                     <th>전화번호</th>
                     <th>신착 도서</th>
                     <th>찜 취소</th>
@@ -362,11 +432,6 @@ const MyLibrary = () => {
                   ))}
                 </tbody>
               </table>
-              {/* <Pagination 
-                currentPage={currentPage} 
-                totalCount={Math.ceil(wishLibraryList.length / itemsPerPage)} 
-                onPageChange={handlePageChange}
-              /> */}
             </>
           ) : (
             <p className="no-items">찜한 도서관이 없습니다.</p>

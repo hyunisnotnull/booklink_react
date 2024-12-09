@@ -155,9 +155,9 @@ const SearchBook = () => {
     return (
         <div className="book-search-container">
         <h1 className="book-search-title">도서 상세검색</h1>
-        <hr />
+        {/* <hr /> */}
         <div className="book-search-form">
-            <label>제목 &nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
+            <label>도서명 &nbsp;:&nbsp;
             <input 
                 type="text" 
                 value={title} 

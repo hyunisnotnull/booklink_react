@@ -9,6 +9,7 @@ import { useJwt } from "react-jwt";
 import { useCookies } from 'react-cookie';
 import StartMarkerIcon from '../../comp/StartMarkerIcon';
 import EndMarkerIcon from '../../comp/EndMarkerIcon';
+import Swal from 'sweetalert2';
 
 const LibraryDetail = () => {
   const { libCode } = useParams(); // URL에서 libCode 가져오기
@@ -353,8 +354,12 @@ const LibraryDetail = () => {
   // 도서관 찜하기 버튼 클릭 핸들러
   const handleFavoriteClick = () => {
     if (isExpired || !decodedToken) {
-      alert('로그인 후 찜할 수 있습니다.');
-      return navigate('/signin');
+      Swal.fire({
+        icon: 'warning',
+        title: '로그인 후 찜할 수 있습니다.',
+        text: '로그인 후 다시 시도해주세요.',
+      }).then(() => navigate('/signin'));
+      return;
     }
 
     if (!isLibraryFavorited && decodedToken && !isExpired) {  // 로그인 되어 있고 찜하지 않은 경우
@@ -367,11 +372,19 @@ const LibraryDetail = () => {
 
       axios.post(`${process.env.REACT_APP_SERVER}/user/addWishLib`, favoriteLibraryData)
         .then(response => {
-          alert(response.data.message);
+          Swal.fire({
+            icon: 'success',
+            title: '찜한 도서관에 추가되었습니다.',
+            text: response.data.message,
+          });
           setIsLibraryFavorited(true);
         })
         .catch(error => {
-          alert(error.response ? error.response.data.message : '서버 오류 발생. 잠시후 다시 시도해주세요.');
+          Swal.fire({
+            icon: 'error',
+            title: '서버 오류 발생',
+            text: error.response ? error.response.data.message : '잠시후 다시 시도해주세요.',
+          });
         });
 
     } else if (isLibraryFavorited && decodedToken) {
@@ -379,11 +392,19 @@ const LibraryDetail = () => {
         data: { ML_U_ID: decodedToken.userId, ML_L_CODE: libDetail.libCode }
       })
       .then(response => {
-        alert(response.data.message);
+        Swal.fire({
+          icon: 'success',
+          title: '찜한 도서관에서 제거되었습니다.',
+          text: response.data.message,
+        });
         setIsLibraryFavorited(false);
       })
       .catch(error => {
-        alert(error.response ? error.response.data.message : '서버 오류 발생. 잠시후 다시 시도해주세요.');
+        Swal.fire({
+          icon: 'error',
+          title: '서버 오류 발생',
+          text: error.response ? error.response.data.message : '잠시후 다시 시도해주세요.',
+        });
       });
     }
 

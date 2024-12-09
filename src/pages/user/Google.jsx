@@ -38,7 +38,7 @@ const Google = () => {
         console.log(data)
         try {
           const res = await axios.post(
-            "http://localhost:3000/user/google",
+            `${process.env.REACT_APP_SERVER}/user/google`,
             data,
             {withCredentials: true},
           );

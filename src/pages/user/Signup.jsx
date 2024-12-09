@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import DaumPostcode from 'react-daum-postcode';
 import '../../css/user/signup.css';
 import Slide from '../../comp/Slide';
+import Swal from 'sweetalert2';
 
 const Signup = () => {
     const [uZipcode, setUZipcode] = useState(""); // 우편번호
@@ -47,16 +48,16 @@ const Signup = () => {
     const validateInputs = () => {
         const newErrors = {};
 
-        // 이메일 형식 검사
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // 이메일 형식 검사 (ID)
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(uId)) {
             newErrors.uId = "올바른 이메일 주소를 입력하세요.";
         }
 
-        // 비밀번호 길이 검사
-        const pwRegex = /^.{6,}$/;
+        // 비밀번호 형식 검사 (특수문자 포함 6자리 이상)
+        const pwRegex = /^(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$/;
         if (!pwRegex.test(uPw)) {
-            newErrors.uPw = "비밀번호는 6자 이상이어야 합니다.";
+            newErrors.uPw = "비밀번호는 특수문자를 포함하여 6자리 이상이어야 합니다.";
         }
 
         // 전화번호 형식 검사
@@ -140,14 +141,30 @@ const Signup = () => {
             const res = await axios.post(url, data);
             console.log('data---> ', res.data)
             if (res.data.u_ID !== null) {
-                navigate('/signin');
+                Swal.fire({
+                    title: '회원가입 성공!',
+                    text: '회원가입에 성공하였습니다. 로그인 페이지로 이동합니다.',
+                    icon: 'success',
+                    confirmButtonText: '확인'
+                }).then(() => {
+                    navigate('/signin');
+                });
             } else {
-                alert('이미 사용중인 ID입니다.');
-                navigate('/signup');
+                Swal.fire({
+                    title: '아이디 사용 불가',
+                    text: '이미 사용중인 아이디입니다. 다른 아이디를 사용해 주세요.',
+                    icon: 'error',
+                    confirmButtonText: '확인'
+                });
             }
    
         } catch(err){
-            console.log('err---> ', err);
+            Swal.fire({
+                title: '오류 발생',
+                text: '회원가입 도중 오류가 발생했습니다. 다시 시도해 주세요.',
+                icon: 'error',
+                confirmButtonText: '확인'
+            });
         }
 
     }
@@ -155,8 +172,8 @@ const Signup = () => {
     const style = {
         background : "rgba(0,0,0,0.25)",
                                 position : "fixed",
-                                left:"60%",
-                                top:"65px",
+                                left:"68%",
+                                top:"230px",
                                 height:"450px",
                                 width:"400px",
                                 border:"1px solid gray",

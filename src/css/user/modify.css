@@ -52,3 +52,11 @@ width: 80%;
 margin: 0 auto;
 text-align: center;
 } */
+
+.btn_pw {
+    margin-top: 10px;
+}
+
+.input_pw {
+    width: 220px;
+}
