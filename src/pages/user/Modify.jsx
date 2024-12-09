@@ -124,8 +124,6 @@ const Modify = () => {
             }
           };
           if ( !isExpired ){
-
-            console.log(decodedToken)
             fetchUserData();
           } else {
             navigate('/')
@@ -298,7 +296,7 @@ const Modify = () => {
             <div className="sign_up_modal_content">
             <form onSubmit={handleSubmit}>
                 <h2>회원 수정</h2>
-                <input name="u_id" className="txt_basic" type="text" value={uId} onChange={uIdChangeHandler} readonly />
+                <input name="u_id" className="txt_basic" type="text" value={uId} onChange={uIdChangeHandler} readOnly />
                 <br />
                 {errors.uId && <span className="sign-error-msg">{errors.uId}</span>}
                 <button type="button" className="btn_pw" onClick={togglePwField}>비밀번호 변경</button>
@@ -327,9 +325,9 @@ const Modify = () => {
                 {errors.uAge && <span className="sign-error-msg">{errors.uAge}</span>}
                 <br />
                 <input type="hidden" id="user_post_address" name="u_post_address" />
-                <div class="address-group">
-                    <input type="text" id="user_zipcode" name="u_zipcode"  value={uZipcode} placeholder="우편번호" readonly required />
-                    <input type="button" class="address-btn" onClick={clickButton} value="우편번호 찾기" /> {openPostcode &&
+                <div className="address-group">
+                    <input type="text" id="user_zipcode" name="u_zipcode"  value={uZipcode} placeholder="우편번호" readOnly required />
+                    <input type="button" className="address-btn" onClick={clickButton} value="우편번호 찾기" /> {openPostcode &&
                         <DaumPostcode
                             style={style}
                             onComplete={selectAddress}  // 값을 선택할 경우 실행되는 이벤트
@@ -338,7 +336,7 @@ const Modify = () => {
                             />
                 }
                 </div>
-                <input className="txt_basic" type="text" id="user_address" name="u_address"  value={uAddress} placeholder="주소" required />
+                <input className="txt_basic" type="text" id="user_address" name="u_address"  value={uAddress} placeholder="주소" readOnly required />
                 <br />
                 <input className="txt_basic" type="text" id="user_detailAddress" name="u_detail_address"  value={uDetailAddress} onChange={uDetailAddressHandler} placeholder="상세주소" required />
                 <br />

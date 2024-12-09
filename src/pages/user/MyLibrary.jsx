@@ -20,13 +20,16 @@ const MyLibrary = () => {
   const [itemsPerPage] = useState(5);   
 
   const [cookie] =  useCookies();
-  const { decodedToken, isExpired } = useJwt(cookie.token);
+  const { isExpired, decodedToken } = useJwt(cookie.token);
+
+  // const parseJWT = jwtDecode(cookie.token);
+
   const navigate = useNavigate();
 
   // useEffect
   useEffect(() => {
 
-    if (isExpired || !cookie.token) {
+    if (!cookie.token || isExpired) {
       Swal.fire({
         title: '로그인 후 내 서재를 확인할 수 있습니다.',
         icon: 'warning',

@@ -9,12 +9,12 @@ const Header = () => {
   const navigate = useNavigate(); 
   const [cookie, setCookie, removeCookie] =  useCookies();
   const { decodedToken, isExpired } = useJwt(cookie.token);
- // const decoded = jwtDecode(token);
+  // const decoded = jwtDecode(token);
 
 
   useEffect(() => {
-
-  }, [isExpired, cookie.token, decodedToken]);
+console.log(isExpired)
+  }, [isExpired, cookie.token]);
       
 
   const handleSearchSubmit = (e) => {
