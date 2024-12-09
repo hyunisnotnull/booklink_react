@@ -193,7 +193,7 @@ const SearchLibraryByName = () => {
       <h1 className="library-search-title">도서관 검색</h1>
       <div className="library-search-form">
         <label>
-          제목&nbsp;:&nbsp;
+          도서관명&nbsp;:&nbsp;
           <input
             type="text"
             value={title}
@@ -204,7 +204,7 @@ const SearchLibraryByName = () => {
       </div>
       <div className="library-search-form">
         <label>
-          지역&nbsp;:&nbsp;
+          지역&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
           <select value={region} onChange={(e) => setRegion(e.target.value)}>
             {regionOptions.map((option) => (
               <option key={option.code} value={option.code}>

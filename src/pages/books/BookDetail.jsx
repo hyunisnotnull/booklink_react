@@ -8,6 +8,7 @@ import '../../css/books/BookDetail.css';
 import '../../css/include/Loading.css';
 import { useJwt } from "react-jwt";
 import { useCookies } from 'react-cookie';
+import Swal from 'sweetalert2';
 
 const BookDetail = () => {
   const { bookID } = useParams(); // URL에서 bookID 가져오기
@@ -113,7 +114,11 @@ const BookDetail = () => {
   // 찜하기 , 취소 클릭 핸들러
   const handleFavoriteClick = () => {
     if (isExpired || !decodedToken) {
-      alert('로그인 후 찜할 수 있습니다.');
+      Swal.fire({
+        title: '로그인 후 찜할 수 있습니다.',
+        icon: 'warning',
+        confirmButtonText: '확인'
+      });
       return navigate('/signin');
     }
 
@@ -129,11 +134,21 @@ const BookDetail = () => {
 
       axios.post(`${process.env.REACT_APP_SERVER}/user/addWishBook`, wishBookData)
         .then(response => {
-          alert(response.data.message);
+          Swal.fire({
+            title: '찜 목록에 추가되었습니다.',
+            text: response.data.message,
+            icon: 'success',
+            confirmButtonText: '확인'
+          });
           setIsFavorited(true);
         })
         .catch(error => {
-          alert(error.response ? error.response.data.message : '서버 오류 발생. 잠시후 다시 시도해주세요.');
+          Swal.fire({
+            title: '서버 오류 발생',
+            text: error.response ? error.response.data.message : '잠시 후 다시 시도해주세요.',
+            icon: 'error',
+            confirmButtonText: '확인'
+          });
         });
 
     } else if (isFavorited && decodedToken) {
@@ -141,11 +156,21 @@ const BookDetail = () => {
         data: { W_U_ID: decodedToken.userId, W_ISBN13: bookDetail.isbn13 }
       })
       .then(response => {
-        alert(response.data.message);
+        Swal.fire({
+          title: '찜 목록에서 제거되었습니다.',
+          text: response.data.message,
+          icon: 'success',
+          confirmButtonText: '확인'
+        });
         setIsFavorited(false);
       })
       .catch(error => {
-        alert(error.response ? error.response.data.message : '서버 오류 발생. 잠시후 다시 시도해주세요.');
+        Swal.fire({
+          title: '서버 오류 발생',
+          text: error.response ? error.response.data.message : '잠시 후 다시 시도해주세요.',
+          icon: 'error',
+          confirmButtonText: '확인'
+        });
       });
     }
 

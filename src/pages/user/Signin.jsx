@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import '../../css/user/signin.css';
 import Slide from '../../comp/Slide';
+import Swal from 'sweetalert2';
 
 const Signin = () => {
   const [uId, setUId] = useState('');
@@ -43,15 +44,30 @@ const Signin = () => {
         const url=`${process.env.REACT_APP_SERVER}/signin`;
         const res = await axios.post(url, data, { withCredentials: true });
         if (res.data.userId !== undefined) {
-          navigate('/');
+          Swal.fire({
+            title: '로그인 성공!',
+            text: '환영합니다! 메인 페이지로 이동합니다.',
+            icon: 'success',
+            confirmButtonText: '확인'
+          }).then(() => {
+            navigate('/');
+          });
         } else {
-
-          alert('올바르지 않은 ID 또는 PW 입니다.')
-          navigate('/signin');
+          Swal.fire({
+            title: '로그인 실패',
+            text: '올바르지 않은 ID 또는 비밀번호입니다.',
+            icon: 'error',
+            confirmButtonText: '확인'
+          });
         }
 
     } catch(err){
-      navigate('/signin');
+      Swal.fire({
+        title: '오류 발생',
+        text: '서버와 연결할 수 없습니다. 나중에 다시 시도해 주세요.',
+        icon: 'error',
+        confirmButtonText: '확인'
+      });
     }
 
   }

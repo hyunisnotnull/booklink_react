@@ -146,7 +146,7 @@ const Home = () => {
         {/* 인기 도서 섹션 */}
         {!isLoading && (
           <div className='popular-book-section'>
-            <h2 className='popular-book'>인기 도서</h2>
+            <h2 className='popular-book'>올해의 도서</h2>
             <hr className="home-hr" />
             <Slide items={popularBooks} itemsPerSlide={itemsPerSlide} />
           </div>
