@@ -208,7 +208,7 @@ const Signup = () => {
                 </div>
                 {errors.uAddress && <span className="sign-error-msg">{errors.uAddress}</span>}
                 <br/>
-                <button type="submit" className="btn_basic" >회원 가입</button>
+                <button type="submit" className="btn_basic" name="signup">회원 가입</button>
                 </form>
             </div>
             <div className="our-event-section">

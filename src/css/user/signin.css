@@ -37,8 +37,14 @@ transition: border-color 0.3s;
     margin-bottom: 10px;
 }
 
+
 .txt_basic {
     width: 350px;
+}
+
+#sign_in_modal input[name='u_id'],
+#sign_in_modal input[name='u_pw'] {
+    width: 370px;
 }
 
 button {
@@ -53,13 +59,36 @@ button {
 }
 
 .btn_basic {
-    width: 180px;
     margin-bottom: 10px;
 }
 
-.btn_basic[type='submit'] {
+.btn_basic[type='submit'],
+.btn_basic[name='google'],
+.btn_basic[name='searchid'],
+.btn_basic[name='searchpw']
+{
+    width: 90px;
     margin-top: 10px;
 }
+
+.btn_basic[name='google']
+{
+    height:43px;
+}
+
+.txt_basic[name='phone']{
+    margin-top: 10px;
+    width: 190px;
+}
+
+.txt_basic[name='id_idsearch'],
+.txt_basic[name='pw_pwsearch']
+{
+    margin-top: 10px;
+    width: 350px;
+    text-align: center;
+}
+
 
 .sign_in_form {
     margin-bottom: 20px;

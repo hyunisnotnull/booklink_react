@@ -63,6 +63,12 @@ button {
     margin-bottom: 10px;
 }
 
+.btn_basic[name='signup']
+{
+    width: 150px;
+}
+
+
 .sign_up_form {
     margin-bottom: 20px;
 }
