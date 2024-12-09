@@ -156,7 +156,7 @@ const SearchLibrary = () => {
       <h1 className="library-search-title">소장 도서관 검색</h1>
       <div className="library-search-form">
         <label>
-          제목&nbsp;:&nbsp;
+          도서명&nbsp;:&nbsp;
           <input
             type="text"
             value={title}
@@ -168,7 +168,7 @@ const SearchLibrary = () => {
       </div>
       <div className="library-search-form">
         <label>
-          ISBN&nbsp;:&nbsp;
+          ISBN&nbsp;&nbsp;:&nbsp;
           <input
             type="text"
             value={isbn}

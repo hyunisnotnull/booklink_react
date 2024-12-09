@@ -16,6 +16,7 @@ module.exports = {
       babelLoader.options.plugins = [
         ...babelLoader.options.plugins,
         ['transform-remove-console', { exclude: ['error', 'warn'] }],
+        // ['transform-remove-console', { exclude: [] }], // 모든 console 메서드 제거
       ];
     } else {
       // 만약 babel-loader를 찾지 못했다면 직접 설정을 추가
@@ -28,6 +29,7 @@ module.exports = {
           ],
           plugins: [
             ['transform-remove-console', { exclude: ['error', 'warn'] }],
+            // ['transform-remove-console', { exclude: [] }], // 모든 console 메서드 제거
           ],
         },
       });
