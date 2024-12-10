@@ -93,12 +93,25 @@ const Signin = () => {
         if (res.data.u_ID) {
           setId(res.data.u_ID);
         } else {
-          alert('일치하는 데이터가 없습니다.')
-          navigate('/signin');
+          Swal.fire({
+            title: '아이디 찾기 실패',
+            text: '일치하는 아이디가 없습니다.',
+            icon: 'error',
+            confirmButtonText: '확인'
+          }).then(() => {
+            navigate('/signin');
+          });
         }
 
     } catch(err){
-      navigate('/signin');
+      Swal.fire({
+        title: '오류 발생',
+        text: '서버와 연결할 수 없습니다. 나중에 다시 시도해 주세요.',
+        icon: 'error',
+        confirmButtonText: '확인'
+      }).then(() => {
+        navigate('/signin');
+      });
     }
 
   }
@@ -110,21 +123,48 @@ const Signin = () => {
       u_id: id,
       u_phone : uPhone,
     };
+
+    // 로딩 시작
+    Swal.fire({
+        title: '비밀번호 찾는중...',
+        text: '잠시만 기다려 주세요.',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
     
     try{
         const url=`${process.env.REACT_APP_SERVER}/user/getpw`;
         const res = await axios.post(url, data, { withCredentials: true });
+
+        Swal.close();
         
         if (res.data.success) {
           setPw(res.data.message);
         } else {
-
-          alert('일치하는 데이터가 없습니다.')
-          navigate('/signin');
+          Swal.fire({
+            title: '비밀번호 찾기 실패',
+            text: '아이디 또는 연락처 정보가 일치하지 않습니다.',
+            icon: 'error',
+            confirmButtonText: '확인'
+          }).then(() => {
+            navigate('/signin');
+          });
         }
 
     } catch(err){
-      navigate('/signin');
+      
+      Swal.close();
+
+      Swal.fire({
+        title: '오류 발생',
+        text: '서버와 연결할 수 없습니다. 나중에 다시 시도해 주세요.',
+        icon: 'error',
+        confirmButtonText: '확인'
+      }).then(() => {
+        navigate('/signin');
+      });
     }
 
   }

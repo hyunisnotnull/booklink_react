@@ -342,8 +342,8 @@ const Modify = () => {
                 <br />
                 {errors.uAddress && <span className="sign-error-msg">{errors.uAddress}</span>}
                 <br />
-                <button type="submit" className="btn_basic" >수정</button>
-                <button onClick={deleteBtnClickHandler} className="btn_basic" >탈퇴</button>
+                <button type="submit" className="btn_basic_modify" >수정</button>
+                <button onClick={deleteBtnClickHandler} className="btn_basic_modify" >탈퇴</button>
                 </form>
             </div>
         </div>

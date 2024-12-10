@@ -9,7 +9,6 @@ font-size: 16px;
 border: 1px solid #ccc;
 border-radius: 4px;
 margin-right: 10px;
-background-color: #f9f9f9;
 cursor: pointer;
 transition: border-color 0.3s;
 }
@@ -37,13 +36,12 @@ button {
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-right: 10px;
-    background-color: #f9f9f9;
     cursor: pointer;
     transition: border-color 0.3s;
 }
 
-.btn_basic {
-    width: 150px;
+.btn_basic_modify {
+    width: 90px;
     margin-bottom: 10px;
 }
 
