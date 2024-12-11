@@ -73,7 +73,8 @@
     margin-right: 50px;
     font-size: 1.8rem;
     color: #333;
-    margin-bottom: 25px;
+    margin-top: 5px;
+    margin-bottom: 10px;
 }
 
 .find-path {
@@ -86,6 +87,7 @@
     padding: 12px 0;
     width: 100px;
     margin: 16px auto;
+    margin-right: 5px;
     font-size: 14px;
     border: rgb(194, 193, 193) solid 1px;
     border-radius: 5px;
@@ -118,13 +120,12 @@
 }
 
 .route-button {
-    background-color: #007bff;
     border: rgb(194, 193, 193) solid 1px;
     border-radius: 5px;
     cursor: pointer;
     width: 100px;
     height: 47px;
-    margin-left: 20px;
+    margin-left: 5px;
     font-size: 14px;
 }
 
@@ -138,6 +139,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 20px;
 }
 
 .new-books-section h2  {
@@ -214,4 +216,15 @@
     margin: 0;
     font-size: 12px;
     color: #666;
+}
+
+.info-page-divider-hr {
+    width: 90%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.info-page-divider-bottom-hr {
+    width: 94%;
+    margin: 0 auto;
 }

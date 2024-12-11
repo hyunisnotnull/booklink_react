@@ -1,7 +1,7 @@
 /* src/css/Navbar.css */
 .navbar {
   background-color: #333;
-  padding: 20px 0;
+  padding: 15px 0;
 }
 
 .nav-links {
@@ -24,4 +24,15 @@
 
 .nav-item a:hover {
   text-decoration: underline;
+}
+
+.nav-item .update-link {
+  cursor: pointer;
+  text-decoration: none;
+  color: #007bff; /* 링크 색상 */
+}
+
+.nav-item .update-link:disabled {
+  color: grey;
+  cursor: not-allowed;
 }

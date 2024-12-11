@@ -358,6 +358,7 @@ const LibraryDetail = () => {
         icon: 'warning',
         title: '로그인 후 찜할 수 있습니다.',
         text: '로그인 후 다시 시도해주세요.',
+        confirmButtonText: '확인'
       }).then(() => navigate('/signin'));
       return;
     }
@@ -431,18 +432,18 @@ const LibraryDetail = () => {
         </div>
         <div className="library-info">
           <h1>{libDetail.libName}</h1>
-          <p><strong>주소:</strong> {libDetail.address}</p>
-          <p><strong>전화번호:</strong> {libDetail.tel}</p>
-          <p><strong>홈페이지 URL:</strong> 
+          <p><strong>주소 : </strong> {libDetail.address}</p>
+          <p><strong>전화번호 : </strong> {libDetail.tel}</p>
+          <p><strong>홈페이지 URL : </strong> 
           <a href={libDetail.homepage} target="_blank" rel="noopener noreferrer">
           {libDetail.homepage}
           </a>
           </p>
-          <p><strong>휴관일:</strong> {libDetail.closed}</p>
-          <p><strong>운영시간:</strong> {libDetail.operatingTime}</p>
-          <p><strong>소장한 도서의 권수:</strong> {libDetail.BookCount}권</p>
+          <p><strong>휴관일 : </strong> {libDetail.closed || "-"}</p>
+          <p><strong>운영시간 : </strong> {libDetail.operatingTime || "-"}</p>
+          <p><strong>소장한 도서의 권수 : </strong> {libDetail.BookCount}권</p>
           <br />
-          <hr className="info-page-divider" />
+          <hr className="info-page-divider-hr" />
           <div className="find-path">
             <h2>길찾기</h2>
             <div className='find-path-menu'>
@@ -502,7 +503,7 @@ const LibraryDetail = () => {
           </div>
         </div>
       </div>
-      <hr className="info-page-divider" />
+      <hr className="info-page-divider-bottom-hr" />
 
       <div className="new-books-section">
         <h2>신착 도서</h2>

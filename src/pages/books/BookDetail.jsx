@@ -116,10 +116,11 @@ const BookDetail = () => {
     if (isExpired || !decodedToken) {
       Swal.fire({
         title: '로그인 후 찜할 수 있습니다.',
+        text: '로그인 후 다시 시도해주세요.',
         icon: 'warning',
         confirmButtonText: '확인'
-      });
-      return navigate('/signin');
+      }).then(() => navigate('/signin'));
+      return
     }
 
     if (!isFavorited && decodedToken && !isExpired) {  // 로그인 되어 있고 찜하지 않은 경우

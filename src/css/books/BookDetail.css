@@ -72,12 +72,14 @@
 .book-description-wrap {
     width: 1000px;
     margin: 20px auto;
+    margin-top: 0px;
 }
 
 .book-description h2 {
     margin-bottom: 10px;
     font-size: 1.3rem;
     color: #333;
+    margin-top: 10px;
 }
 
 .book-description p {
@@ -89,7 +91,7 @@
 .book-related h2  {
     width: 1000px;
     margin: 10px auto;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     font-size: 1.3rem;
     color: #333;
 }
@@ -133,6 +135,7 @@ color: red;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 20px;
 }
 
 .book-related .book-items {
