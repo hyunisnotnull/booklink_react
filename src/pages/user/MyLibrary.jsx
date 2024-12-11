@@ -22,8 +22,6 @@ const MyLibrary = () => {
   const [cookie] =  useCookies();
   const { isExpired, decodedToken } = useJwt(cookie.token);
 
-  // const parseJWT = jwtDecode(cookie.token);
-
   const navigate = useNavigate();
 
   // useEffect

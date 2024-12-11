@@ -220,11 +220,13 @@ const SearchBook = () => {
             <ul className="search-book-items">
             {books.map((book, index) => (
                 <li key={index} className="search-book-item">
-                <img 
-                    className="search-book-image" 
-                    src={book.bookImageURL || "/img/defaultBook.png"} 
-                    alt={book.bookname} 
-                />
+                <a href={`/book/detail/${book.isbn13 || book.set_isbn13}`}>
+                    <img 
+                        className="search-book-image" 
+                        src={book.bookImageURL || "/img/defaultBook.png"} 
+                        alt={book.bookname} 
+                    />
+                </a>
                 <div className="search-book-details">
                     <h3 className="search-book-name">{book.bookname}</h3>
                     <p className="search-book-authors">{book.authors}</p>
