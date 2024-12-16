@@ -106,6 +106,12 @@ button {
     margin: 0 auto;
 }
 
+.our-event-section-2 .slider .book-list .book-items .book-item{
+    background-color: #fff;
+    background: #fff;
+    box-shadow: none;
+}
+
 .our-event-section-2 .slider .book-item img {
     width: 500px;
     object-fit: contain;
