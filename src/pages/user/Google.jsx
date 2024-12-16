@@ -1,9 +1,11 @@
-import React , { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useCookies } from 'react-cookie';
 
 const Google = () => {
+    const [cookies, setCookie, removeCookie] = useCookies(['token']);
     const params = new URLSearchParams(window.location.search);
     const [code, setCode] = useState(params.get("code"));
     const navigate = useNavigate();
@@ -61,6 +63,10 @@ const Google = () => {
             confirmButtonText: '확인'
           });
         }
+
+        const authHeader = res.headers.get('Authorization');
+        const token = authHeader.split(' ')[1]; //공백으로 분리
+        setCookie('token',token);
 
         navigate("/");
 
