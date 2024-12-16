@@ -5,12 +5,13 @@ import '../../css/user/signin.css';
 import Slide from '../../comp/Slide';
 import Modal from '../include/modal';
 import Swal from 'sweetalert2';
+import { useCookies } from 'react-cookie';
 
 const Signin = () => {
+  const [cookies, setCookie, removeCookie] = useCookies(['token']);
   const [uId, setUId] = useState('');
   const [uPw, setUPw] = useState('');
   const [events, setEvents] = useState([]);
-
 
   const [idModalOpen, setIdModalOpen] = useState(false);
   const [pwModalOpen, setPwModalOpen] = useState(false);
@@ -182,14 +183,23 @@ const Signin = () => {
         const url=`${process.env.REACT_APP_SERVER}/signin`;
         const res = await axios.post(url, data, { withCredentials: true });
         if (res.data.userId !== undefined) {
+
+          const authHeader = res.headers.get('Authorization');
+
           Swal.fire({
             title: '로그인 성공!',
             text: '환영합니다! 메인 페이지로 이동합니다.',
             icon: 'success',
             confirmButtonText: '확인'
+
           }).then(() => {
+
+            const token = authHeader.split(' ')[1]; //공백으로 분리
+            setCookie('token',token);
             navigate('/');
+
           });
+          
         } else {
           Swal.fire({
             title: '로그인 실패',
