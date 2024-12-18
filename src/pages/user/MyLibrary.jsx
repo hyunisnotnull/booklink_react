@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaHeart, FaBook, FaBookOpen } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useJwt } from "react-jwt";
 import { jwtDecode } from "jwt-decode";
@@ -316,18 +316,18 @@ const MyLibrary = () => {
                   {currentBooks.map((book) => (
                     <tr key={book.W_ISBN13}>
                       <td>
-                        <a href={`/book/detail/${book.W_ISBN13}`}>
+                        <Link to={`/book/detail/${book.W_ISBN13}`}>
                           <img 
                             src={book.W_BOOKIMAGEURL || "/img/defaultBook.png"} 
                             alt={book.W_NAME} 
                             className="wish-book-image"
                           />
-                        </a>
+                        </Link>
                       </td>
                       <td>
-                        <a href={`/book/detail/${book.W_ISBN13}`}>
+                        <Link to={`/book/detail/${book.W_ISBN13}`}>
                           {cleanBookName(book.W_NAME)}
-                        </a>
+                        </Link>
                       </td>
                       <td>{extractAuthors(book.W_AUTHORS)}</td>
                       <td>{book.W_PUBLISHER}</td>
@@ -403,20 +403,20 @@ const MyLibrary = () => {
                   {currentLibraries.map((library) => (
                     <tr key={library.l_CODE}>
                       <td>
-                        <a href={`/book/library_detail/${library.l_CODE}`}>
+                        <Link to={`/book/library_detail/${library.l_CODE}`}>
                           {library.l_NAME}
-                        </a>
+                        </Link>
                       </td>
                       <td>{library.l_ADDRESS}</td>
                       <td>{library.l_TEL}</td>
                       <td>
-                        <a href={`/book/library_detail/${library.l_CODE}`}>
+                        <Link to={`/book/library_detail/${library.l_CODE}`}>
                           {newBooksForLibraries[library.l_CODE] && newBooksForLibraries[library.l_CODE].length > 0 ? (
                               <FaBookOpen className="new-books-icon" />
                             ) : (
                               <FaBook className="new-books-icon-no" />
                             )}
-                        </a>
+                        </Link>
                       </td>
                       <td>
                         <button 

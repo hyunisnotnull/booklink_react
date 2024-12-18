@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate, Link } from 'react-router-dom'; 
 import { useJwt } from "react-jwt";
 import { useCookies } from 'react-cookie'; // useCookies import
 import '../../css/include/Header.css';
@@ -50,9 +50,9 @@ console.log(isExpired)
     <header className="header">
       <div className="header_wrap">
         <div className="logo">
-          <a href='/'>
+          <Link to='/'>
             <h1>도서링크</h1>
-          </a>
+          </Link>
         </div>
         <form id="searchBook" onSubmit={handleSearchSubmit}>
           <select name="searchType" id="searchType">
@@ -70,13 +70,13 @@ console.log(isExpired)
     
           {!isExpired ?
           <>
-          <a href='/modify'>회원수정</a>
-          <a href='#none' onClick={signOutClickHandler} >로그아웃</a>
+          <Link to='/modify'>회원수정</Link>
+          <Link to='#none' onClick={signOutClickHandler} >로그아웃</Link>
           </>
           :
           <>
-          <a href='/signin'>로그인</a>
-          <a href='/signup'>회원가입</a>
+          <Link to='/signin'>로그인</Link>
+          <Link to='/signup'>회원가입</Link>
           </>
           }
         </div>

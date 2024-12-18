@@ -24,3 +24,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Docker 관련 파일들
+.docker/
+docker-compose.override.yml
+docker-compose.yml
+Dockerfile
+Dockerfile.prod
+docker-compose*
+.dockerignore
+*.docker

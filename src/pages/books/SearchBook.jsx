@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from '../../comp/Pagination';
 import '../../css/books/SearchBook.css';
@@ -220,13 +220,13 @@ const SearchBook = () => {
             <ul className="search-book-items">
             {books.map((book, index) => (
                 <li key={index} className="search-book-item">
-                <a href={`/book/detail/${book.isbn13 || book.set_isbn13}`}>
+                <Link to={`/book/detail/${book.isbn13 || book.set_isbn13}`}>
                     <img 
                         className="search-book-image" 
                         src={book.bookImageURL || "/img/defaultBook.png"} 
                         alt={book.bookname} 
                     />
-                </a>
+                </Link>
                 <div className="search-book-details">
                     <h3 className="search-book-name">{book.bookname}</h3>
                     <p className="search-book-authors">{book.authors}</p>
@@ -234,7 +234,7 @@ const SearchBook = () => {
                     <p className="search-book-publication_year">출판년도 : {book.publication_year}</p>
                     <p className="search-book-loan_count">대출건수 : {book.loan_count}</p>
                     <p className="search-book-isbn">ISBN : {book.isbn13}</p>
-                    <a href={`/book/detail/${book.isbn13 || book.set_isbn13}`} className="search-book-detail-link">상세정보</a>
+                    <Link to={`/book/detail/${book.isbn13 || book.set_isbn13}`} className="search-book-detail-link">상세정보</Link>
                 </div>
                 </li>
             ))}
