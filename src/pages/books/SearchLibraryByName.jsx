@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from '../../comp/Pagination';
 import '../../css/books/SearchLibrary.css';
@@ -244,7 +244,7 @@ const SearchLibraryByName = () => {
                   {library.l_NAME}</h3>
                   <p>주소: {library.l_ADDRESS}</p>
                   <p>전화번호: {library.l_TEL}</p>
-                  <a href={`/book/library_detail/${library.l_CODE}`}>상세 보기</a>
+                  <Link to={`/book/library_detail/${library.l_CODE}`}>상세 보기</Link>
                 </li>
               ))}
             </ul>

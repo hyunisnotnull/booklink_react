@@ -1,5 +1,6 @@
 import React, { useState, useEffect  } from 'react';
 import { cleanBookName, extractAuthors } from '../js/Textfilter.js';
+import { Link } from 'react-router-dom';
 import '../css/include/Slide.css';
 
 const Slide = ({ items = [], itemsPerSlide, autoSlide = false }) => {  
@@ -65,16 +66,16 @@ const Slide = ({ items = [], itemsPerSlide, autoSlide = false }) => {
                   </a>
                 ) : (
                   <div>
-                    <a href={`/book/detail/${item.isbn13}`}>
+                    <Link to={`/book/detail/${item.isbn13}`}>
                       <img 
                       src={item.bookImageURL} 
                       alt={item.bookname} 
                       className="book-image" 
                       />
-                    </a>
+                    </Link>
                     <p><strong>{cleanBookName(item.bookname)}</strong></p>
                     <p>{extractAuthors(item.authors)}</p>
-                    <a href={`/book/detail/${item.isbn13}`}>상세 보기</a>
+                    <Link to={`/book/detail/${item.isbn13}`}>상세 보기</Link>
                   </div>
                 )}
               </div>
