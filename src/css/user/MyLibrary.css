@@ -39,6 +39,12 @@
     background-color: #f1f1f1;
 }
 
+.wishlist td.wish-book-title {
+    max-width: 200px;
+    white-space: nowrap;  
+    overflow: hidden; 
+    text-overflow: ellipsis;  
+}
 
 .wishlist tr:hover {
     background-color: #ddd;
