@@ -309,7 +309,7 @@ const Modify = () => {
                 <select name="u_sex" className="gen" id="gen" value={uGender} onChange={uGenderChangeHandler}>
                     <option value="">성별</option>
                     <option value="M">남성</option>
-                    <option value="W">여성</option>
+                    <option value="F">여성</option>
                 </select>
                 <select name="u_age" id="age" value={uAge} onChange={uAgeChangeHandler}>
                     <option value="">나이</option>

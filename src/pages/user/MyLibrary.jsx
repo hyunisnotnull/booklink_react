@@ -324,7 +324,7 @@ const MyLibrary = () => {
                           />
                         </Link>
                       </td>
-                      <td>
+                      <td className='wish-book-title'>
                         <Link to={`/book/detail/${book.W_ISBN13}`}>
                           {cleanBookName(book.W_NAME)}
                         </Link>
